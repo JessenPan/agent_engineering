@@ -1,0 +1,522 @@
+{
+  "title": "客服 Agent 评估系统",
+  "version": "0.2",
+  "date": "2026-10-30",
+  "summary": "验证客服 Agent 是否把事情办对、按规则办完，并能稳定地重复做到。系统把业务结果、操作合规和沟通质量分别检查，再用真实线上反馈持续改进。",
+  "statusNote": "设计方案，尚未实现或运行评估实验。下列结构综合论文与官方工程指南；发布门槛和评估效果仍需用本项目数据验证。",
+  "components": [
+    {
+      "id": "recordings",
+      "title": "业务证据",
+      "original": true,
+      "summary": "历史对话、业务结果与经复核的反馈。",
+      "input": "有权使用的客服会话、工具事件、订单等业务状态和延迟反馈；保留原始案例编号。",
+      "output": "脱敏后的来源资料、时间范围与样本分布说明。",
+      "rule": "兼顾正常、边界、拒绝、转人工与失败案例；历史话术不是唯一标准答案，模拟变体必须标注。"
+    },
+    {
+      "id": "conversion",
+      "title": "场景审核",
+      "summary": "提取客户目标、事实与政策，验证场景可执行。",
+      "input": "业务证据、当时适用的政策与知识、可恢复的初始状态。",
+      "output": "经过审核的场景、来源记录、未知事实和可接受结果。",
+      "rule": "先验证初始化和参考解确实可行；不把历史客服错误写成标准答案。没有依据的事实保持未知。"
+    },
+    {
+      "id": "scenarios",
+      "title": "场景与标准库",
+      "original": true,
+      "summary": "版本化保存场景、结果断言、评分细则和数据划分。",
+      "input": "经过审核的案例、批准使用的业务政策和明确记录的假设。",
+      "output": "场景编号；客户专用事实；初始状态；政策与知识版本；业务结果与动作合规断言；评分细则；开发、校准与独立评测划分。",
+      "rule": "关联案例与变体按组划分；隐藏标准与参考解不发给 Agent 或模拟器。评测样本用于开发后，记录用途变化。"
+    },
+    {
+      "id": "runner",
+      "title": "评估运行器",
+      "summary": "隔离每次试验，编排交互并记录终止原因。",
+      "input": "评估场景与运行配置：固定 Agent、模拟器、工具、数据、政策、知识和评估器版本，并指定重复次数、轮次、时长及费用上限。",
+      "output": "相互隔离的试验、路由后的消息与工具调用、运行编号、终止原因和执行证据。",
+      "rule": "每次从新的会话与业务状态开始。结束、拒绝、转人工、超时、循环与基础设施错误分别记录；结束不等于成功。重试保留原失败记录。"
+    },
+    {
+      "id": "simulator",
+      "title": "客户模拟器",
+      "original": true,
+      "summary": "依照客户事实与目标，对最新消息作出回应。",
+      "input": "客户专用的场景设定，以及截至当前客户可见的对话内容。",
+      "output": "下一条客户消息、澄清、同意、拒绝或转人工请求。",
+      "rule": "只读取客户可见的信息，保持事实与行为一致，不提供隐藏解法。需要客户操作时，用客户侧工具结果约束事实；定期人工审核模拟行为。"
+    },
+    {
+      "id": "agent",
+      "title": "被评估 Agent",
+      "original": true,
+      "summary": "使用自身策略、政策、知识与工具完成客户请求。",
+      "input": "客户消息、批准使用的政策与知识访问方式、工具定义和执行结果。",
+      "output": "面向客户的回复、工具调用和转人工请求。",
+      "rule": "固定实际待比较的 Agent 配置；不提供参考解、模拟器指令或隐藏评分标准。评估的是 Agent 整体，而不仅是单次模型回答。"
+    },
+    {
+      "id": "sandbox",
+      "title": "业务测试环境",
+      "summary": "可重置的业务状态，以及真正执行状态变化的测试工具。",
+      "input": "业务初始状态数据、版本化工具约定，以及 Agent 实际发起的工具调用。",
+      "output": "工具返回结果，以及创建退货、记录退款等可观察的业务状态变化。",
+      "rule": "按工具约定执行读写和基础权限检查；隔离试验、外部依赖和副作用，不写入真实客户系统。政策约束仍需在评估时核验。"
+    },
+    {
+      "id": "evidence",
+      "title": "执行证据",
+      "summary": "关联消息、工具、初末状态、版本和费用。",
+      "input": "来自运行器、客户模拟器、被评估 Agent 和业务环境的事件，通过运行编号与案例编号关联。",
+      "output": "场景编号、试验编号、可获取的执行轨迹、初末状态、版本清单、终止原因、耗时、token 与成本。",
+      "rule": "成功、失败和未评分试验都保存。以执行事件和真实状态支撑判定，不以工具 HTTP 成功或最终话术替代业务结果。"
+    },
+    {
+      "id": "validity",
+      "title": "试验有效性",
+      "summary": "核对场景、模拟器、环境与证据是否可信。",
+      "input": "客户设定、对话轨迹、初始数据检查，以及模拟器或环境错误。",
+      "output": "有效、无效或无法判定，并附上证据和原因。",
+      "rule": "有效、无效和无法判定分别保留。不能将 Agent 自身超时、循环或违规随意归类为无效；责任不清时人工复核。"
+    },
+    {
+      "id": "outcomes",
+      "title": "业务与政策检查",
+      "summary": "核验业务目标、必要信息，以及动作时的授权和确认。",
+      "input": "评估器专用的验收标准、适用政策、完整工具与消息轨迹，以及业务初始和最终状态。",
+      "output": "业务结果、必要沟通与动作合规的独立检查项，附证据、通过／失败／未知与严重程度。",
+      "rule": "能程序验证的事实优先用断言。接受等效有效路径；最终状态正确不代表确认时序合规。无权限时正确拒绝或转人工可按场景判通过。"
+    },
+    {
+      "id": "rubric",
+      "title": "沟通质量评估",
+      "summary": "按明确细则逐维度评分，标明证据与不确定性。",
+      "input": "版本化评分细则、对话及相关执行证据，以及与任务匹配的参考事实和校准示例。",
+      "output": "各项评分、支撑证据，以及存在不确定性或分歧的判定。",
+      "rule": "裁判固定模型、提示词与细则版本；检查位置、长度和风格偏好。使用相关完整上下文，允许未知；质量分不能抵消任务或政策失败。"
+    },
+    {
+      "id": "review",
+      "title": "人工复核与校准",
+      "summary": "复核严重失败和分歧，并抽查通过与无效试验。",
+      "input": "模拟有效性、任务结果和评分细则的检查结果，以及底层轨迹和客户场景。",
+      "output": "人工审核标签、待确定案例，以及有依据的场景或评估器修订。",
+      "rule": "校准样本与独立验证样本分离；记录人工分歧、修改理由和适用任务／语言范围。修改评估标准不能替代修复真正的 Agent 问题。"
+    },
+    {
+      "id": "report",
+      "title": "版本比较与发布决策",
+      "summary": "报告任务通过、违规、重复可靠性、质量和成本。",
+      "input": "逐次试验结果、有效性标签、人工复核，以及所比较版本的固定运行配置。",
+      "output": "按任务分组的基线／候选结果、全部尝试与各类分母、重复可靠性、误判、质量、耗时与费用，以及待复核事项。",
+      "rule": "比较条件和发布门槛预先确定。评分标准变化需重评；部分样本不能伪装成完整基准结果，模拟提升不能直接当作线上因果改善。"
+    },
+    {
+      "id": "regression",
+      "title": "失败归因与回归",
+      "summary": "复现问题、修复负责的组件，再跑原案例和固定测试集。",
+      "input": "经过复核的失败案例，及其准确的任务、Agent、工具、模拟器和评估器版本。",
+      "output": "可复现的失败案例、有针对性的修复和回归证据；返回运行器开展下一轮比较。",
+      "rule": "分别归因 Agent、场景、模拟器、环境与评估器。校准与独立评测隔离；同一问题链接全局 Bad cases 记录，修复后保留回归与上线验证证据。"
+    },
+    {
+      "id": "online",
+      "title": "线上观察与反馈",
+      "summary": "关联真实业务结果、采样评分、用户反馈与版本。",
+      "input": "真实会话与执行记录、业务结果和延迟反馈；明确的采样规则、任务类型、版本与用户分组。",
+      "output": "质量趋势、采样覆盖、待复核案例和发布后的实际结果；重要案例进入场景库。",
+      "rule": "区分单次调用与完整会话、自动分数与业务结果、模拟与真实流量。线上评估可异步；效果趋势不能代替随机 A/B 因果证据。"
+    }
+  ],
+  "routing": [
+    {
+      "label": "客户目标与已知事实",
+      "target": "simulator",
+      "detail": "仅提供客户可见的设定、对话与客户侧工具结果。"
+    },
+    {
+      "label": "业务政策、知识与工具",
+      "target": "agent",
+      "detail": "使用获准访问的信息；不包含隐藏标准或参考解。"
+    },
+    {
+      "label": "业务初始状态",
+      "target": "sandbox",
+      "detail": "每次试验独立重置，避免上次写入影响下次。"
+    },
+    {
+      "label": "隐藏验收标准与评分细则",
+      "target": "outcomes",
+      "detail": "仅供业务／政策检查与质量评估器使用。"
+    }
+  ],
+  "example": {
+    "title": "示例场景：客户申请退回一副耳机",
+    "setup": "这是人为构造的示例，尚未执行测试：订单 123 在五天前送达，客户因改变主意申请退货；商品状态和其他退货政策条件均已明确满足。",
+    "expected": "Agent 核验身份、取得必要确认并创建正确的退货记录，同时准确说明后续步骤。如果政策要求收到退货后才退款，此时不应立即退款。",
+    "boundary": "以上均为说明架构的人为示例，尚未执行。客户可走不同的有效对话路径；拒绝、转人工是否成功，由每个场景的目标与政策事先确定。",
+    "cases": [
+      {
+        "title": "核验身份、取得确认，创建正确退货记录并说明后续步骤。",
+        "decision": "可判任务通过；沟通质量另评。",
+        "reason": "业务目标、必要信息与动作合规均有证据。"
+      },
+      {
+        "title": "回复“退货已办理”，但业务系统中没有退货记录。",
+        "decision": "业务失败。",
+        "reason": "流畅的回答不能证明动作已完成。"
+      },
+      {
+        "title": "退货记录正确，但未取得必要确认就执行；或违规提前退款。",
+        "decision": "政策失败。",
+        "reason": "正确的最终状态不能抵消未经授权的操作。"
+      },
+      {
+        "title": "模拟器编造订单事实，或测试环境初始化出错。",
+        "decision": "试验无效或待复核。",
+        "reason": "保留证据和数量，先确定责任，不把这次试验直接算成 Agent 成功。"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "tau-bench",
+      "kind": "原始论文",
+      "title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+      "shortTitle": "τ-bench / 结果与重复可靠性",
+      "url": "https://arxiv.org/abs/2406.12045v1",
+      "authors": "Yao, Shunyu; Shinn, Noah; Razavi, Pedram et al.",
+      "date": "2024-06-17",
+      "version": "v1",
+      "supports": "§3（pp. 3–5）区分客户设定、工具和隐藏目标，提出 pass^k；明确指出最终结果正确仍可能缺少客户确认。用于业务断言、信息隔离与重复可靠性。",
+      "limitations": "核对 §3–6 相关内容；零售与航空模拟不能代表所有客服业务，也不能证明线上效果。对话无需逐字一致；本项目动作合规门槛属于进一步的工程设计。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/sierra-research/tau-bench"
+    },
+    {
+      "id": "tau2-bench",
+      "kind": "原始论文",
+      "title": "τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment",
+      "shortTitle": "τ²-Bench / 模拟有效性",
+      "url": "https://arxiv.org/abs/2506.07982v1",
+      "authors": "Barres, Victor; Dong, Honghua; Ray, Soham et al.",
+      "date": "2025-06-09",
+      "version": "v1",
+      "supports": "§3、§4.3 与 Appendix B 将状态断言、任务可行性和模拟器审核连接起来；客户需要执行操作时，可加入客户侧工具。",
+      "limitations": "核对 §3、§4.3 与 Appendix B；论文仍发现部分模拟器关键错误，也未完整建模专家与新手差异，不能认为模拟用户代表所有真实客户。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/sierra-research/tau2-bench"
+    },
+    {
+      "id": "agentbench",
+      "kind": "原始论文",
+      "title": "AgentBench: Evaluating LLMs as Agents",
+      "shortTitle": "AgentBench / 交互与失败类型",
+      "url": "https://arxiv.org/abs/2308.03688v3",
+      "authors": "Liu, Xiao; Yu, Hao; Zhang, Hanchen et al.",
+      "date": "2025-10-04",
+      "version": "v3",
+      "supports": "§2、§3、§4.3 区分交互状态、任务结果与终止原因。用于任务分组、失败分类和执行记录。",
+      "limitations": "选读相关章节；这是多环境基准，不能直接套用其任务权重或推断客服上线质量。本轮未运行代码。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/THUDM/AgentBench"
+    },
+    {
+      "id": "mtbench",
+      "kind": "原始论文",
+      "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+      "shortTitle": "MT-Bench / 裁判偏差",
+      "url": "https://arxiv.org/abs/2306.05685v4",
+      "authors": "Zheng, Lianmin; Chiang, Wei-Lin; Sheng, Ying et al.",
+      "date": "2023-12-24",
+      "version": "v4",
+      "supports": "§3.3–3.5 分析位置、冗长与上下文问题；成对顺序对照与完整对话上下文为裁判校准提供依据。",
+      "limitations": "核对 §3.3–3.5、§4.1–4.2。人类偏好一致性取决于样本与平局处理，不能把论文的高一致率当作通用业务准确率。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/lm-sys/FastChat/tree/main/fastchat/llm_judge",
+      "citations": {
+        "count": 1856,
+        "url": "https://openalex.org/W7133239970",
+        "checkedAt": "2026-10-30",
+        "recordDoi": "https://doi.org/10.52202/075280-2020",
+        "updatedAt": "2026-10-29T09:56:32.521200"
+      }
+    },
+    {
+      "id": "geval",
+      "kind": "原始论文",
+      "title": "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment",
+      "shortTitle": "G-Eval / 评分细则",
+      "url": "https://arxiv.org/abs/2303.16634v3",
+      "authors": "Liu, Yang; Iter, Dan; Xu, Yichong et al.",
+      "date": "2023-05-23",
+      "version": "v3",
+      "supports": "§2 以任务定义、评价维度、评价步骤和结构化评分组织模型评审。用于明确各维度判定标准。",
+      "limitations": "核对 §2–4 相关内容；摘要与对话生成上的相关性不等于客服工具任务成功。论文也观察到对模型生成文本的潜在偏好。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/nlpyang/geval",
+      "citations": {
+        "count": 943,
+        "url": "https://openalex.org/W4389519254",
+        "checkedAt": "2026-10-30",
+        "recordDoi": "https://doi.org/10.18653/v1/2023.emnlp-main.153",
+        "updatedAt": "2026-10-29T09:56:32.521200"
+      }
+    },
+    {
+      "id": "anthropic",
+      "kind": "官方工程指南",
+      "title": "Demystifying evals for AI agents",
+      "shortTitle": "Anthropic / Agent 评估实践",
+      "url": "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+      "authors": "Anthropic",
+      "date": "2026-01-09",
+      "version": "在线文档，按核对日期记录",
+      "supports": "区分 task、trial、trace、outcome、grader；隔离试验，组合程序、模型和人工评估，并将离线测试、线上监测与 A/B 分开。",
+      "limitations": "阅读术语、会话 Agent、非确定性、实施步骤和评估组合相关章节。属于官方工程经验，不是对本架构的实验验证。",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "langfuse",
+      "kind": "官方工程指南",
+      "title": "Langfuse · Evaluation Core Concepts",
+      "shortTitle": "Langfuse / 质量闭环",
+      "url": "https://langfuse.com/docs/evaluation/core-concepts",
+      "authors": "Langfuse",
+      "date": "2026-10-30 核对",
+      "version": "在线文档，按核对日期记录",
+      "supports": "Evaluation Loop、Scores、Evaluators and rules：把评分关联到执行记录，区分评分方法与采样规则，把复核后的线上问题补入评测集。",
+      "limitations": "核对核心概念页面。平台能保存分数不代表该分数准确；固定数据集回归也可在上线后继续运行。",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "langsmith",
+      "kind": "官方工程指南",
+      "title": "LangSmith · Set up LLM-as-a-judge online evaluators",
+      "shortTitle": "LangSmith / 线上采样",
+      "url": "https://docs.langchain.com/langsmith/online-evaluations-llm-as-judge",
+      "authors": "LangChain",
+      "date": "2026-10-30 核对",
+      "version": "在线文档，按核对日期记录",
+      "supports": "核对按运行或会话评估、筛选规则、采样与后台回填。用于标注线上评分覆盖范围与反馈延迟。",
+      "limitations": "核对相关文档，未接入 SDK。文档中的示例采样率不是通用标准；自动评分趋势不构成发布的因果证据。",
+      "checkedAt": "2026-10-30"
+    },
+    {
+      "id": "tau2-code",
+      "kind": "固定版本实现",
+      "title": "τ-bench v2.0.0 · Task Schema and Evaluation",
+      "shortTitle": "τ-bench v2 / 固定版本实现",
+      "url": "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
+      "authors": "Sierra Research",
+      "date": "2026-10-30 核对",
+      "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+      "supports": "核对 evaluation、domains、orchestrator、user_simulator 与 judge-validation：参考动作可以只是有效路径之一；检查项是否影响最终奖励由配置决定；评估器需要独立验证。",
+      "limitations": "固定 v2.0.0 的文档与关键代码，未安装或运行。默认数据库哈希判定与本项目定向业务断言不同；部分自然语言检查与裁判默认项仍有实验性或未验证范围。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/sierra-research/tau2-bench"
+    },
+    {
+      "id": "tau2-release",
+      "kind": "固定版本实现",
+      "title": "τ-bench 2.0.0 — Multilingual and Voice",
+      "shortTitle": "τ-bench v2 / 版本可比性",
+      "url": "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0",
+      "authors": "Sierra Research",
+      "date": "2026-10-20",
+      "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+      "supports": "发布说明明确 v2.0 与 1.x 分数不可比较；运行指南分别记录失败、未评分、缺失和基础设施错误。用于冻结完整评估配置与说明分母。",
+      "limitations": "核对发布说明与运行指南的 Scoring、Pass^3 等章节。新实现不等于原始论文；语音／多语言功能属于可选扩展，不据此扩大本项目当前范围。",
+      "checkedAt": "2026-10-30",
+      "repository": "https://github.com/sierra-research/tau2-bench"
+    }
+  ],
+  "evidenceNote": "选取与客服任务直接相关的 τ 系列与 AgentBench，以及引用较多的 MT-Bench、G-Eval 作为方法依据；官方指南与固定版本实现用于核对工程细节。下方逐条说明支持的设计和局限。引用量来自 OpenAlex 的指定条目快照，不能当作质量排名。本文只完成资料选读与架构设计，没有运行论文实验或验证评估准确性。",
+  "flowCaption": "系统总览：从可信场景到线上回归",
+  "flow": [
+    {
+      "title": "准备可信场景",
+      "summary": "把真实问题整理成可复现的测试，先写清成功标准。",
+      "components": [
+        "recordings",
+        "conversion",
+        "scenarios"
+      ]
+    },
+    {
+      "title": "运行隔离试验",
+      "summary": "客户与 Agent 动态对话；每次从干净的业务状态开始。",
+      "components": [
+        "runner",
+        "simulator",
+        "agent",
+        "sandbox",
+        "evidence"
+      ]
+    },
+    {
+      "title": "分层判定",
+      "summary": "先检查试验有效性，再核验结果、合规与沟通质量。",
+      "components": [
+        "validity",
+        "outcomes",
+        "rubric",
+        "review"
+      ]
+    },
+    {
+      "title": "比较与决策",
+      "summary": "在相同评估条件下比较版本，检查收益、风险和不确定性。",
+      "components": [
+        "report"
+      ]
+    },
+    {
+      "title": "线上验证与回归",
+      "summary": "观察实际任务结果，将复核后的失败加入固定回归集。",
+      "components": [
+        "online",
+        "regression"
+      ]
+    }
+  ],
+  "feedback": "线上发现问题 → 人工复核与归因 → 修复负责的组件 → 重跑原案例与固定回归集。",
+  "designBasis": "图中的五步是本项目的工程组织方式。论文提供评估方法，官方指南提供实践经验，不能据此声称整套系统已验证有效。",
+  "flowSources": [
+    "anthropic",
+    "tau-bench",
+    "langfuse"
+  ],
+  "terms": [
+    {
+      "title": "场景（Task）",
+      "detail": "一个客户目标，加上初始业务状态、适用政策和明确的成功标准。"
+    },
+    {
+      "title": "试验（Trial）",
+      "detail": "在某个场景下完整跑一次 Agent。同一场景需要多次试验，观察是否稳定。"
+    },
+    {
+      "title": "执行轨迹（Trace）",
+      "detail": "这次试验实际发生的消息、工具调用、状态变化与终止原因。"
+    },
+    {
+      "title": "评估器（Grader）",
+      "detail": "根据证据作出一项判定的规则、程序、模型或人工评审；一项任务可以有多个评估器。"
+    }
+  ],
+  "runtime": {
+    "summary": "运行器负责初始化和路由；Agent 自己决定下一步。历史对话用于构造场景，测试时允许出现不同但有效的对话路径。",
+    "control": "重置会话与业务状态，固定版本，限制轮次、时长和费用。",
+    "evidence": "关联场景编号与试验编号，保存消息、工具动作、初末状态、错误、耗时和费用。",
+    "boundary": "需要客户执行设备操作时，可按 τ²-Bench 的思路加入客户侧工具与状态；一般退货场景不必增加这层复杂度。模拟器不读取 Agent 的私有工具结果，也不决定是否通过。",
+    "sources": [
+      "tau-bench",
+      "tau2-bench",
+      "tau2-code"
+    ]
+  },
+  "checkSummary": "各项结果分别保存。先区分试验有效性与评分状态：有效试验也可能因结果证据不足而待判定／未评分。Agent 自身超时、循环或错误操作仍是失败，不能当作测试故障排除。",
+  "checks": [
+    {
+      "title": "1. 试验是否有效",
+      "evidence": "场景事实、初始化检查、模拟器行为和完整执行记录。",
+      "decision": "标记有效、无效或无法判定，并保留理由。证据不足时不强行判成功，也不直接归咎 Agent。"
+    },
+    {
+      "title": "2. 业务是否完成",
+      "evidence": "目标业务状态与必须告知客户的信息；优先使用程序可核验的断言。",
+      "decision": "确认目标是否真正达成。正确拒绝或转人工，可以是场景事先定义的成功结果。"
+    },
+    {
+      "title": "3. 动作是否合规",
+      "evidence": "动作发生时的身份权限、必要确认、政策版本及调用顺序。",
+      "decision": "检查先确认再执行、禁止操作等硬条件。最终状态正确，也可能因未经授权的操作而失败。"
+    },
+    {
+      "title": "4. 沟通是否好用",
+      "evidence": "相关完整对话、工具和业务证据；明确的评分细则与人工审核示例。",
+      "decision": "模型裁判按准确性、清晰度和有用性分别评分，指出证据；分歧与不确定项交给人工复核。"
+    }
+  ],
+  "checkBoundary": "综合通过必须满足预先定义的任务与政策硬条件。较高的语气或流畅度分数不能抵消关键失败；模型判定也需要在独立人工标注样本上检验。",
+  "checkSources": [
+    "tau-bench",
+    "tau2-bench",
+    "mtbench",
+    "geval"
+  ],
+  "metrics": [
+    {
+      "title": "任务通过率",
+      "meaning": "满足业务目标和政策硬条件的有效试验数 ÷ 有效试验数。",
+      "report": "同时给出全部尝试、有效、无效和有效但待判定／未评分的数量；按任务类型报告，说明未决项如何进入分母，避免平均值掩盖薄弱场景。"
+    },
+    {
+      "title": "严重违规率",
+      "meaning": "发生未经授权退款等预先定义严重违规的有效试验比例。",
+      "report": "违规类型、证据和人工复核结果；不能只报告平均质量分。"
+    },
+    {
+      "title": "重复可靠性 pass^k",
+      "meaning": "固定条件下，同一场景独立重复 k 次全部成功的可靠性；pass@k 则是至少一次成功。",
+      "report": "每场景计划 n ≥ k 次试验，逐场景计算后汇总，注明 n、k 与估计方法。不能将总体通过率直接取 k 次方；缺失或无效试验未补齐时，不报告该场景的完整重复可靠性。"
+    },
+    {
+      "title": "评估器误判",
+      "meaning": "用独立人工标注样本检查错判，重点看严重失败被误判为通过。",
+      "report": "人工标准、任务与语言范围、样本量、分歧和未知比例；一致性高不等于业务一定成功。"
+    },
+    {
+      "title": "沟通质量",
+      "meaning": "按同一版细则分别比较准确性、清晰度、有用性等维度。",
+      "report": "分数分布与典型证据。成对比较时控制答案顺序并复核分歧；不把模型偏好当作业务事实。"
+    },
+    {
+      "title": "耗时与费用",
+      "meaning": "分别记录用户等待时间、每次 Agent 执行成本和整次评估成本。",
+      "report": "样本量、延迟分位数、模型用量，以及模拟器和评估器费用；与质量结果关联，但不混成单一总分。"
+    }
+  ],
+  "metricBoundary": "重复可靠性与误判统计都依赖明确的抽样和计算约定。发布判断应同时看样本量与不确定性；当前没有实际数据或经过验证的数值门槛。",
+  "metricSources": [
+    "tau-bench",
+    "agentbench",
+    "mtbench",
+    "anthropic"
+  ],
+  "release": {
+    "rules": [
+      "先冻结比较条件：场景与划分、业务初始状态、政策与知识、工具、客户模拟器、评分细则和裁判版本。对基线与候选版本使用同一评估设置，重复试验并报告任务分组结果。",
+      "开发集用于修复，校准集用于改进评估器，独立评测集用于比较。由同一原始案例产生的变体放在同一划分；独立样本用于开发后，记录用途变化并补充新的保留样本。",
+      "按业务风险预先约定通过条件、严重违规处理与复核要求。模型或评分规则变化时，重新评估可比较样本，不能直接拼接不同标准下的分数。",
+      "离线通过后仍要检查真实业务结果、用户反馈、采样覆盖与延迟反馈。线上评分变化用于发现问题；要判断发布是否造成改善，另行设计合适的随机 A/B 实验。"
+    ],
+    "versionNote": "版本实例：τ-bench v2.0.0 明确说明评分与 1.x 不可直接比较。新版本更改了沟通判定、自然语言断言等环节，因此比较时必须固定整个评估配置，而不只是 Agent 模型。",
+    "sources": [
+      "tau2-release",
+      "langsmith",
+      "anthropic"
+    ]
+  },
+  "revisions": [
+    "v0.1 · 2026-10-29：建立历史对话、客户模拟器、待测 Agent、业务环境与失败回归的基础方案。原始架构与来源核对记录完整保留。",
+    "v0.2 · 2026-10-30：依据原始论文与官方指南补充分层判定、重复可靠性、评估器校准、版本可比性及线上闭环；改为五步总览、单次试验图、判定表和退货示例。仍为待实现方案。"
+  ],
+  "inlineCitations": {
+    "runtime": [
+      "tau2-bench"
+    ],
+    "checks": [
+      "mtbench"
+    ],
+    "metrics": [
+      "tau-bench"
+    ],
+    "release": [
+      "tau2-release"
+    ]
+  }
+}

@@ -1,0 +1,4574 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-30",
+  "title": "LLM & Agent 工程架构",
+  "assistant": "leo",
+  "principles": [
+    "先理解问题与架构选择，再用论文、官方资料与代码实现交叉验证。",
+    "理论与实践配对：每个方向都有可验证的学习产出和练手项目。",
+    "记录实际证据、失败和局限；未读论文、未运行项目不计为已完成。"
+  ],
+  "categories": [
+    {
+      "id": "01",
+      "dir": "01-agent-control-and-orchestration",
+      "title": "Agent 控制循环与工作流编排",
+      "navTitle": "控制循环与工作流编排",
+      "english": "Control & Orchestration",
+      "summary": "把一次模型调用组织成可终止、可恢复、可解释的任务执行过程。",
+      "keywords": "ReAct Reflexion LangGraph workflow state machine 工作流 状态机",
+      "prerequisites": [],
+      "units": [
+        {
+          "title": "最小 Agent 循环",
+          "scope": "观察、决策、行动、反馈和结束条件；分清模型与执行器的职责。",
+          "evidence": "画出控制循环并运行包含两次工具调用的最小示例。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "01.1",
+          "resources": [
+            "https://arxiv.org/abs/2210.03629",
+            "https://github.com/langchain-ai/langgraph",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "让模型提出动作，由执行器校验参数、执行并判断结束。",
+          "exercise": {
+            "title": "最小工具循环",
+            "goal": "实现检索和计算两种工具，保存每轮观察、动作与结果。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "01.1-P1"
+          }
+        },
+        {
+          "title": "固定工作流与自主循环",
+          "scope": "比较路由、顺序链、并行执行和动态决策的适用条件。",
+          "evidence": "在同一任务上解释为什么选固定工作流或自主循环。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "01.2",
+          "resources": [
+            "https://arxiv.org/abs/2210.03629",
+            "https://github.com/langchain-ai/langgraph",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "先建立固定工作流基线，再评估动态决策的收益。",
+          "exercise": {
+            "title": "工作流与自主循环对照",
+            "goal": "用相同任务和模型比较顺序工作流与自主工具循环。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "01.2-P1"
+          }
+        },
+        {
+          "title": "状态与任务编排",
+          "scope": "显式状态、状态转换、事件记录、子任务输入输出。",
+          "evidence": "提供状态图及一次完整执行记录，状态变化可以追踪。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "01.3",
+          "resources": [
+            "https://github.com/langchain-ai/langgraph",
+            "https://docs.langchain.com/oss/python/langgraph/persistence"
+          ],
+          "practiceNote": "显式定义状态字段、转换条件和可恢复的执行边界。",
+          "exercise": {
+            "title": "状态机执行轨迹",
+            "goal": "为三步任务建立状态图，检查正常和失败路径的状态变化。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "01.3-P1"
+          }
+        },
+        {
+          "title": "停止、预算与失败处理",
+          "scope": "步数、时间和调用预算；重试、不可恢复错误和终止。",
+          "evidence": "注入工具失败与循环调用，证明执行能按约定结束。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "01.4",
+          "resources": [
+            "https://github.com/langchain-ai/langgraph",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "将步数、时间和错误预算交给执行器强制检查。",
+          "exercise": {
+            "title": "循环与工具故障注入",
+            "goal": "模拟重复决策、工具超时和连续报错，检查停止原因。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "01.4-P1"
+          }
+        },
+        {
+          "title": "持久化与人工介入",
+          "scope": "检查点、暂停、继续和审批后的状态恢复。",
+          "evidence": "暂停后重新启动任务，验证不会无意重复已完成的操作。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "01.5",
+          "resources": [
+            "https://github.com/langchain-ai/langgraph",
+            "https://docs.langchain.com/oss/python/langgraph/persistence"
+          ],
+          "practiceNote": "恢复依赖持久检查点；审批后重放前检查副作用。",
+          "exercise": {
+            "title": "暂停审批与断点恢复",
+            "goal": "暂停一个模拟写任务，重启后批准继续并检查重复写入。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "01.5-P1"
+          }
+        },
+        {
+          "title": "架构比较与复盘",
+          "scope": "对比手写循环和图式编排，记录适用范围和成本。",
+          "evidence": "在固定任务集上比较成功率、成本和代码复杂度。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "01.6",
+          "resources": [
+            "https://arxiv.org/abs/2210.03629",
+            "https://arxiv.org/abs/2303.11366",
+            "https://github.com/langchain-ai/langgraph",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "固定任务集和预算，记录失败与框架额外成本。",
+          "exercise": {
+            "title": "手写循环与 LangGraph 对照",
+            "goal": "比较两种执行器的成功率、恢复能力与实现复杂度。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "01.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2210.03629",
+          "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+          "authors": [
+            "Yao, Shunyu",
+            "Zhao, Jeffrey",
+            "Yu, Dian",
+            "Du, Nan",
+            "Shafran, Izhak",
+            "Narasimhan, Karthik",
+            "Cao, Yuan"
+          ],
+          "date": "2022-10-06",
+          "url": "https://arxiv.org/abs/2210.03629",
+          "question": "推理与行动如何交替？环境反馈如何改变下一步决策？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "ReAct"
+        },
+        {
+          "kind": "paper",
+          "id": "2303.11366",
+          "title": "Reflexion: Language Agents with Verbal Reinforcement Learning",
+          "authors": [
+            "Shinn, Noah",
+            "Cassano, Federico",
+            "Berman, Edward",
+            "Gopinath, Ashwin",
+            "Narasimhan, Karthik",
+            "Yao, Shunyu"
+          ],
+          "date": "2023-03-20",
+          "url": "https://arxiv.org/abs/2303.11366",
+          "question": "语言反馈如何保存并影响后续尝试？这与更新模型参数有何区别？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Reflexion"
+        },
+        {
+          "kind": "official",
+          "title": "Anthropic · Building Effective Agents",
+          "url": "https://www.anthropic.com/research/building-effective-agents",
+          "question": "工作流与 Agent 的边界如何影响复杂度与可靠性？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "langchain-ai / langgraph",
+          "url": "https://github.com/langchain-ai/langgraph",
+          "question": "状态图、检查点、人工介入分别位于哪些实现层？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        },
+        {
+          "kind": "official",
+          "title": "LangGraph · Persistence",
+          "url": "https://docs.langchain.com/oss/python/langgraph/persistence",
+          "question": "检查点与跨会话存储有何区别，进程重启后如何恢复？",
+          "verification": "已核对官方章节内容；配置与代码示例尚未复现",
+          "status": "queued",
+          "checkedAt": "2026-10-16"
+        }
+      ],
+      "project": {
+        "title": "可恢复的单 Agent 执行器",
+        "goal": "执行包含检索和计算的任务，显式管理状态、预算与失败。",
+        "status": "planned",
+        "steps": [
+          "建立带完成条件的小型任务集，实现最小控制循环。",
+          "加入工具异常、超时、步数限制与检查点。",
+          "对比固定工作流与自主循环，分析失败记录。"
+        ],
+        "acceptance": [
+          "正常任务可得到可验证的结果。",
+          "连续失败和重复决策不会导致无限执行。",
+          "恢复执行不会重复产生外部副作用。",
+          "保留模型、工具、预算及每次状态变化记录。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "01-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "02",
+      "dir": "02-tool-use-and-protocols",
+      "title": "Tool Use 与工具协议",
+      "english": "Tools & Protocols",
+      "summary": "让模型安全、准确地使用外部能力，明确工具契约和协议边界。",
+      "keywords": "MCP function calling schema Toolformer Gorilla API",
+      "prerequisites": [
+        "01"
+      ],
+      "units": [
+        {
+          "title": "工具契约与结构化输出",
+          "scope": "工具描述、JSON Schema、必填字段和输出语义。",
+          "evidence": "为三个工具定义可校验的输入输出，并解释设计理由。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "02.1",
+          "resources": [
+            "https://arxiv.org/abs/2305.15334",
+            "https://github.com/modelcontextprotocol/python-sdk",
+            "https://modelcontextprotocol.io/specification"
+          ],
+          "practiceNote": "执行前校验输入，明确输出结构与错误语义。",
+          "exercise": {
+            "title": "三工具契约测试",
+            "goal": "给检索、计算和模拟写入工具建立有效与无效参数用例。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "02.1-P1"
+          }
+        },
+        {
+          "title": "选择工具与参数生成",
+          "scope": "选择时机、工具消歧、参数缺失与多次调用。",
+          "evidence": "构造易混淆工具任务，检查选择和参数正确率。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "02.2",
+          "resources": [
+            "https://arxiv.org/abs/2302.04761",
+            "https://arxiv.org/abs/2305.15334",
+            "https://github.com/modelcontextprotocol/python-sdk",
+            "https://modelcontextprotocol.io/specification"
+          ],
+          "practiceNote": "检查工具选择和参数正确性，缺参时先澄清。",
+          "exercise": {
+            "title": "相似工具消歧任务集",
+            "goal": "构造同名近义工具与缺参任务，分开统计选错和参数错误。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "02.2-P1"
+          }
+        },
+        {
+          "title": "错误与幂等",
+          "scope": "业务错误、网络错误、重试、幂等键和部分成功。",
+          "evidence": "重复调用写入工具，验证不会重复执行业务动作。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "02.3",
+          "resources": [
+            "https://github.com/modelcontextprotocol/python-sdk",
+            "https://modelcontextprotocol.io/specification"
+          ],
+          "practiceNote": "区分可重试故障与业务拒绝，用幂等键保护写操作。",
+          "exercise": {
+            "title": "重复调用与部分失败",
+            "goal": "模拟超时后重试和写入后报错，核对只发生一次业务效果。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "02.3-P1"
+          }
+        },
+        {
+          "title": "MCP 基础",
+          "scope": "工具、资源、提示以及客户端与服务端的关系。",
+          "evidence": "连接一个本地 MCP 服务，记录发现和调用过程。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "02.4",
+          "resources": [
+            "https://github.com/modelcontextprotocol/python-sdk",
+            "https://modelcontextprotocol.io/specification"
+          ],
+          "practiceNote": "分清工具、资源和提示，固定所用规范与 SDK 版本。",
+          "exercise": {
+            "title": "本地 MCP 客户端与服务端",
+            "goal": "实现工具发现和一次调用，保存请求、返回和协议版本。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "02.4-P1"
+          }
+        },
+        {
+          "title": "认证、授权与信任",
+          "scope": "权限范围、凭证传递、敏感信息和人工审批。",
+          "evidence": "用受限身份验证工具访问边界。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "02.5",
+          "resources": [
+            "https://github.com/modelcontextprotocol/python-sdk",
+            "https://modelcontextprotocol.io/specification"
+          ],
+          "practiceNote": "在程序侧验证身份与资源权限，凭证不进入提示或日志。",
+          "exercise": {
+            "title": "受限身份调用矩阵",
+            "goal": "用两个测试身份访问不同资源，核对授权和拒绝路径。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "02.5-P1"
+          }
+        },
+        {
+          "title": "协议与普通 API 的比较",
+          "scope": "MCP、函数调用和 A2A 的职责与组合方式。",
+          "evidence": "画出调用关系，说明每层解决的问题和额外开销。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "02.6",
+          "resources": [
+            "https://github.com/modelcontextprotocol/python-sdk",
+            "https://modelcontextprotocol.io/specification"
+          ],
+          "practiceNote": "将模型工具调用、MCP 传输与 Agent 任务交接分层比较。",
+          "exercise": {
+            "title": "API 与 MCP 调用路径对照",
+            "goal": "让同一模拟工具通过普通 API 与 MCP 被调用，画出职责边界。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "02.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2302.04761",
+          "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+          "authors": [
+            "Schick, Timo",
+            "Dwivedi-Yu, Jane",
+            "Dessì, Roberto",
+            "Raileanu, Roberta",
+            "Lomeli, Maria",
+            "Zettlemoyer, Luke",
+            "Cancedda, Nicola",
+            "Scialom, Thomas"
+          ],
+          "date": "2023-02-09",
+          "url": "https://arxiv.org/abs/2302.04761",
+          "question": "工具使用训练中的调用时机、参数和结果利用如何构造？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Toolformer"
+        },
+        {
+          "kind": "paper",
+          "id": "2305.15334",
+          "title": "Gorilla: Large Language Model Connected with Massive APIs",
+          "authors": [
+            "Patil, Shishir G.",
+            "Zhang, Tianjun",
+            "Wang, Xin",
+            "Gonzalez, Joseph E."
+          ],
+          "date": "2023-05-24",
+          "url": "https://arxiv.org/abs/2305.15334",
+          "question": "API 文档与检索如何影响调用准确性？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Gorilla"
+        },
+        {
+          "kind": "official",
+          "title": "MCP · 官方规范",
+          "url": "https://modelcontextprotocol.io/specification",
+          "question": "协议定义了什么？版本兼容和授权如何处理？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "modelcontextprotocol / python-sdk",
+          "url": "https://github.com/modelcontextprotocol/python-sdk",
+          "question": "最小客户端与服务端如何定义并执行工具？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        }
+      ],
+      "project": {
+        "title": "本地工具服务与契约测试",
+        "goal": "用检索、计算和模拟写入三个工具研究调用契约与恢复。",
+        "status": "planned",
+        "steps": [
+          "定义工具接口及正常、缺参和错误输入。",
+          "连接模型调用与本地 MCP 服务。",
+          "验证权限、错误分类和幂等处理。"
+        ],
+        "acceptance": [
+          "无效参数在执行前被拒绝。",
+          "工具返回结果和错误都可以被记录与验证。",
+          "重复写入不会重复产生效果。",
+          "受限工具未经授权不能执行。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "02-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "03",
+      "dir": "03-context-rag-and-memory",
+      "title": "上下文管理、RAG 与记忆",
+      "english": "Context, RAG & Memory",
+      "summary": "在有限上下文中提供可信信息，并管理长期记忆的更新与失效。",
+      "keywords": "RAG retrieval context MemGPT embedding memory 检索 记忆",
+      "prerequisites": [
+        "01"
+      ],
+      "units": [
+        {
+          "title": "上下文预算与选择",
+          "scope": "输入预算、信息优先级、位置敏感性和摘要。",
+          "evidence": "对照不同位置与长度的输入，记录结果变化。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "03.1",
+          "resources": [
+            "https://arxiv.org/abs/2307.03172",
+            "https://github.com/run-llama/llama_index",
+            "https://docs.llamaindex.ai/en/stable/"
+          ],
+          "practiceNote": "保留关键证据位置，固定输入预算做长度与位置对照。",
+          "exercise": {
+            "title": "长上下文位置实验",
+            "goal": "把同一证据放到输入开头、中间和末尾，比较答案与成本。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "03.1-P1"
+          }
+        },
+        {
+          "title": "检索链路",
+          "scope": "切分、索引、稀疏/向量检索、重排和元数据过滤。",
+          "evidence": "在固定查询集上比较检索方案，保存命中文档。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "03.2",
+          "resources": [
+            "https://arxiv.org/abs/2005.11401",
+            "https://github.com/run-llama/llama_index",
+            "https://docs.llamaindex.ai/en/stable/"
+          ],
+          "practiceNote": "将切分、检索和重排分开评测，保存命中原文。",
+          "exercise": {
+            "title": "小型检索方案对照",
+            "goal": "在固定问题集上比较稀疏检索、向量检索和重排。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "03.2-P1"
+          }
+        },
+        {
+          "title": "证据与引用",
+          "scope": "来源定位、证据充分性、冲突处理与拒答。",
+          "evidence": "答案能定位到具体资料；无证据问题能被识别。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "03.3",
+          "resources": [
+            "https://arxiv.org/abs/2005.11401",
+            "https://github.com/run-llama/llama_index",
+            "https://docs.llamaindex.ai/en/stable/"
+          ],
+          "practiceNote": "引用应能定位到原始片段；无充分证据时记录缺口。",
+          "exercise": {
+            "title": "引用与无答案检查",
+            "goal": "加入无答案和冲突资料，检查引用定位及拒答行为。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "03.3-P1"
+          }
+        },
+        {
+          "title": "会话与长期记忆",
+          "scope": "对话状态、事实记忆、过程记忆和检索时机。",
+          "evidence": "设计可追溯的记忆条目，并验证跨会话调用。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "03.4",
+          "resources": [
+            "https://arxiv.org/abs/2310.08560",
+            "https://github.com/run-llama/llama_index",
+            "https://docs.llamaindex.ai/en/stable/"
+          ],
+          "practiceNote": "区分会话状态与持久事实，记录记忆来源和读取时机。",
+          "exercise": {
+            "title": "跨会话记忆实验",
+            "goal": "保存带来源的用户事实，在新会话中检查召回及来源追踪。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "03.4-P1"
+          }
+        },
+        {
+          "title": "更新、纠错与遗忘",
+          "scope": "过时事实、重复记忆、删除和敏感信息边界。",
+          "evidence": "更新冲突事实并确认旧记录不会继续误导回答。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "03.5",
+          "resources": [
+            "https://arxiv.org/abs/2310.08560",
+            "https://github.com/run-llama/llama_index",
+            "https://docs.llamaindex.ai/en/stable/"
+          ],
+          "practiceNote": "显式处理事实版本、过期和删除，验证旧信息不再被召回。",
+          "exercise": {
+            "title": "冲突事实更新与删除",
+            "goal": "先写入旧事实，再更新和删除，检查索引与回答是否同步。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "03.5-P1"
+          }
+        },
+        {
+          "title": "RAG 和记忆评估",
+          "scope": "区分检索错误、上下文错误和生成错误。",
+          "evidence": "分别报告检索指标与答案质量，分析失败归因。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "03.6",
+          "resources": [
+            "https://arxiv.org/abs/2005.11401",
+            "https://arxiv.org/abs/2307.03172",
+            "https://arxiv.org/abs/2310.08560",
+            "https://github.com/run-llama/llama_index",
+            "https://docs.llamaindex.ai/en/stable/"
+          ],
+          "practiceNote": "将检索命中、上下文利用和最终答案质量分别归因。",
+          "exercise": {
+            "title": "RAG 失败归因报告",
+            "goal": "对同一任务保存检索片段和最终答案，分类统计失败原因。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "03.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2005.11401",
+          "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+          "authors": [
+            "Lewis, Patrick",
+            "Perez, Ethan",
+            "Piktus, Aleksandra",
+            "Petroni, Fabio",
+            "Karpukhin, Vladimir",
+            "Goyal, Naman",
+            "Küttler, Heinrich",
+            "Lewis, Mike",
+            "Yih, Wen-tau",
+            "Rocktäschel, Tim",
+            "Riedel, Sebastian",
+            "Kiela, Douwe"
+          ],
+          "date": "2020-05-22",
+          "url": "https://arxiv.org/abs/2005.11401",
+          "question": "参数知识与外部检索如何结合？论文中的训练设置适用于哪些任务？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "RAG"
+        },
+        {
+          "kind": "paper",
+          "id": "2307.03172",
+          "title": "Lost in the Middle: How Language Models Use Long Contexts",
+          "authors": [
+            "Liu, Nelson F.",
+            "Lin, Kevin",
+            "Hewitt, John",
+            "Paranjape, Ashwin",
+            "Bevilacqua, Michele",
+            "Petroni, Fabio",
+            "Liang, Percy"
+          ],
+          "date": "2023-07-06",
+          "url": "https://arxiv.org/abs/2307.03172",
+          "question": "信息在上下文中的位置如何影响模型利用证据？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Lost in the Middle"
+        },
+        {
+          "kind": "paper",
+          "id": "2310.08560",
+          "title": "MemGPT: Towards LLMs as Operating Systems",
+          "authors": [
+            "Packer, Charles",
+            "Wooders, Sarah",
+            "Lin, Kevin",
+            "Fang, Vivian",
+            "Patil, Shishir G.",
+            "Stoica, Ion",
+            "Gonzalez, Joseph E."
+          ],
+          "date": "2023-10-12",
+          "url": "https://arxiv.org/abs/2310.08560",
+          "question": "分层记忆与上下文调度如何工作，维护代价是什么？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "MemGPT"
+        },
+        {
+          "kind": "official",
+          "title": "LlamaIndex · 官方文档",
+          "url": "https://docs.llamaindex.ai/en/stable/",
+          "question": "索引、检索、重排与查询如何组合？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "run-llama / llama_index",
+          "url": "https://github.com/run-llama/llama_index",
+          "question": "检索组件如何实现，如何替换和测试？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        }
+      ],
+      "project": {
+        "title": "带证据的知识库与记忆实验",
+        "goal": "让同一组问题在不同检索、上下文和记忆策略下运行。",
+        "status": "planned",
+        "steps": [
+          "准备有来源与预期答案的小型公开资料集。",
+          "实现检索、引用、摘要与会话记忆。",
+          "加入无答案、冲突和过时资料，分别分析误差。"
+        ],
+        "acceptance": [
+          "每个事实结论能回到原始资料位置。",
+          "分别记录检索命中与最终答案正确性。",
+          "能处理知识缺失与事实更新。",
+          "比较策略时使用同一问题集和一致预算。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "03-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "04",
+      "dir": "04-planning-reasoning-and-reflection",
+      "title": "规划、推理与自我修正",
+      "english": "Planning & Reflection",
+      "summary": "研究任务分解、搜索与验证何时能带来真实收益。",
+      "keywords": "Tree of Thoughts Self-Refine planning reflection verification 搜索 规划",
+      "prerequisites": [
+        "01",
+        "02"
+      ],
+      "units": [
+        {
+          "title": "任务分解与计划表示",
+          "scope": "可执行子任务、依赖、前置条件和完成标准。",
+          "evidence": "把复杂任务拆成带依赖和可检查结果的计划。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "04.1",
+          "resources": [
+            "https://arxiv.org/abs/2305.10601",
+            "https://github.com/princeton-nlp/tree-of-thought-llm",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "用可检查的子任务、依赖和结束条件表达计划。",
+          "exercise": {
+            "title": "依赖计划执行器",
+            "goal": "把一个可验证任务拆成有依赖的步骤，逐步检查结果。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "04.1-P1"
+          }
+        },
+        {
+          "title": "计划与执行反馈",
+          "scope": "计划更新、局部失败与重新规划。",
+          "evidence": "注入环境变化，检查计划是否随证据更新。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "04.2",
+          "resources": [
+            "https://arxiv.org/abs/2303.17651",
+            "https://github.com/madaan/self-refine",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "环境结果改变后重新判断计划，保留原计划与修改理由。",
+          "exercise": {
+            "title": "环境变化与重规划",
+            "goal": "在执行中移除一项可用资源，比较静态计划和重新规划。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "04.2-P1"
+          }
+        },
+        {
+          "title": "多路径搜索",
+          "scope": "候选生成、评价、分支宽度和搜索预算。",
+          "evidence": "在固定预算下比较直接执行与有限搜索。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "04.3",
+          "resources": [
+            "https://arxiv.org/abs/2305.10601",
+            "https://github.com/princeton-nlp/tree-of-thought-llm",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "独立定义候选评价和搜索预算，与直接求解比较。",
+          "exercise": {
+            "title": "有限搜索对照实验",
+            "goal": "用可自动判分任务比较直接求解与有限宽度搜索。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "04.3-P1"
+          }
+        },
+        {
+          "title": "验证与自我反馈",
+          "scope": "区分自我评价、外部验证器与真实环境检查。",
+          "evidence": "用测试或环境结果识别模型自信但错误的答案。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "04.4",
+          "resources": [
+            "https://arxiv.org/abs/2303.17651",
+            "https://github.com/madaan/self-refine",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "用外部测试检验模型反馈，不能只凭自评宣布成功。",
+          "exercise": {
+            "title": "自评与外部验证对照",
+            "goal": "构造自信但错误的输出，比较模型自评与真实测试判断。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "04.4-P1"
+          }
+        },
+        {
+          "title": "修正和停止",
+          "scope": "重复改写、错误强化、收益递减与停止条件。",
+          "evidence": "设计修正失败案例，验证不会无限自我循环。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "04.5",
+          "resources": [
+            "https://arxiv.org/abs/2303.17651",
+            "https://github.com/madaan/self-refine",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "为修正设置次数与收益门槛，记录错误被强化的情况。",
+          "exercise": {
+            "title": "无效修正与停止实验",
+            "goal": "加入无法修复和反复改错样本，检查达到预算后的终止。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "04.5-P1"
+          }
+        },
+        {
+          "title": "收益与成本比较",
+          "scope": "成功率、调用成本、延迟和任务难度分组。",
+          "evidence": "给出不同策略的对照结果和适用范围。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "04.6",
+          "resources": [
+            "https://arxiv.org/abs/2305.10601",
+            "https://arxiv.org/abs/2303.17651",
+            "https://github.com/princeton-nlp/tree-of-thought-llm",
+            "https://github.com/madaan/self-refine",
+            "https://www.anthropic.com/research/building-effective-agents"
+          ],
+          "practiceNote": "按任务难度分组，在同一预算与检查器下比较策略。",
+          "exercise": {
+            "title": "三策略成本质量报告",
+            "goal": "汇总直接执行、先规划和验证修正的成功率、成本与延迟。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "04.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2305.10601",
+          "title": "Tree of Thoughts: Deliberate Problem Solving with Large Language Models",
+          "authors": [
+            "Yao, Shunyu",
+            "Yu, Dian",
+            "Zhao, Jeffrey",
+            "Shafran, Izhak",
+            "Griffiths, Thomas L.",
+            "Cao, Yuan",
+            "Narasimhan, Karthik"
+          ],
+          "date": "2023-05-17",
+          "url": "https://arxiv.org/abs/2305.10601",
+          "question": "搜索空间、候选评价和回溯如何定义？在什么任务上验证？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Tree of Thoughts"
+        },
+        {
+          "kind": "paper",
+          "id": "2303.17651",
+          "title": "Self-Refine: Iterative Refinement with Self-Feedback",
+          "authors": [
+            "Madaan, Aman",
+            "Tandon, Niket",
+            "Gupta, Prakhar",
+            "Hallinan, Skyler",
+            "Gao, Luyu",
+            "Wiegreffe, Sarah",
+            "Alon, Uri",
+            "Dziri, Nouha",
+            "Prabhumoye, Shrimai",
+            "Yang, Yiming",
+            "Gupta, Shashank",
+            "Majumder, Bodhisattwa Prasad",
+            "Hermann, Katherine",
+            "Welleck, Sean",
+            "Yazdanbakhsh, Amir",
+            "Clark, Peter"
+          ],
+          "date": "2023-03-30",
+          "url": "https://arxiv.org/abs/2303.17651",
+          "question": "同一模型生成反馈并修正时，有哪些有效条件与局限？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Self-Refine"
+        },
+        {
+          "kind": "official",
+          "title": "Anthropic · Building Effective Agents",
+          "url": "https://www.anthropic.com/research/building-effective-agents",
+          "question": "何时使用编排器和验证反馈？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "princeton-nlp / tree-of-thought-llm",
+          "url": "https://github.com/princeton-nlp/tree-of-thought-llm",
+          "question": "任务定义、搜索策略和评估器如何实现？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        },
+        {
+          "kind": "github",
+          "title": "madaan / self-refine",
+          "url": "https://github.com/madaan/self-refine",
+          "question": "生成、反馈和修正如何组织，何时停止？",
+          "verification": "已阅读原仓库 README 的流程与任务说明；代码尚未运行",
+          "status": "queued",
+          "checkedAt": "2026-10-16"
+        }
+      ],
+      "project": {
+        "title": "规划与验证策略对照实验",
+        "goal": "在可自动检查结果的任务上比较直接执行、先规划和外部验证。",
+        "status": "planned",
+        "steps": [
+          "构造小型任务集与独立结果检查器。",
+          "实现三种策略，并固定模型与成本预算。",
+          "分析修正成功、无效修正和错误强化案例。"
+        ],
+        "acceptance": [
+          "所有策略使用一致的数据和结果检查。",
+          "报告成功率、成本和延迟。",
+          "保留至少一个失败分析，避免只展示成功案例。",
+          "达到预算上限后执行可正常结束。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "04-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "05",
+      "dir": "05-environment-interaction",
+      "title": "Agent 与真实环境交互",
+      "english": "Environment Interaction",
+      "summary": "将行动落到网页、文件和代码仓库，并检查环境是否真的发生预期变化。",
+      "keywords": "WebArena SWE-agent browser sandbox computer use 浏览器 沙箱",
+      "prerequisites": [
+        "01",
+        "02"
+      ],
+      "units": [
+        {
+          "title": "环境与观测接口",
+          "scope": "网页、终端、文件和数据库的状态表示。",
+          "evidence": "说明模型看见什么、可以做什么、反馈来自哪里。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "05.1",
+          "resources": [
+            "https://arxiv.org/abs/2307.13854",
+            "https://arxiv.org/abs/2405.15793",
+            "https://github.com/SWE-agent/SWE-agent",
+            "https://swe-agent.com/latest/"
+          ],
+          "practiceNote": "明确模型能观察的状态、可执行动作及反馈来源。",
+          "exercise": {
+            "title": "文件环境观测适配器",
+            "goal": "把练习仓库的文件状态和测试结果转成可追踪的观察。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "05.1-P1"
+          }
+        },
+        {
+          "title": "行动接口设计",
+          "scope": "高层动作与低层动作、可寻址元素和动作反馈。",
+          "evidence": "比较两种动作接口对同一任务的影响。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "05.2",
+          "resources": [
+            "https://arxiv.org/abs/2405.15793",
+            "https://github.com/SWE-agent/SWE-agent",
+            "https://swe-agent.com/latest/"
+          ],
+          "practiceNote": "以稳定的可寻址对象设计动作，返回足够的执行反馈。",
+          "exercise": {
+            "title": "高层与低层动作接口对照",
+            "goal": "比较直接命令与读文件、编辑、测试等专用动作接口。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "05.2-P1"
+          }
+        },
+        {
+          "title": "沙箱与隔离",
+          "scope": "临时工作区、容器、资源边界和清理。",
+          "evidence": "验证实验只能访问授权测试资源。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "05.3",
+          "resources": [
+            "https://github.com/SWE-agent/SWE-agent",
+            "https://swe-agent.com/latest/"
+          ],
+          "practiceNote": "在临时资源中设置目录、网络和执行预算边界。",
+          "exercise": {
+            "title": "隔离工作区边界检查",
+            "goal": "用无敏感数据的测试目录验证可访问和不可访问资源。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "05.3-P1"
+          }
+        },
+        {
+          "title": "结果与副作用验证",
+          "scope": "检查文件、数据库或网页真实状态。",
+          "evidence": "任务成功依赖环境断言，而非模型自报完成。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "05.4",
+          "resources": [
+            "https://arxiv.org/abs/2307.13854",
+            "https://arxiv.org/abs/2405.15793",
+            "https://github.com/SWE-agent/SWE-agent",
+            "https://swe-agent.com/latest/"
+          ],
+          "practiceNote": "以文件、数据库或测试断言判断任务实际完成情况。",
+          "exercise": {
+            "title": "补丁与环境结果验证",
+            "goal": "对模型声称已修复的问题独立运行测试，并核对文件差异。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "05.4-P1"
+          }
+        },
+        {
+          "title": "重放与恢复",
+          "scope": "环境快照、动作日志、可重复输入和恢复。",
+          "evidence": "在相同初始状态下重放失败案例。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "05.5",
+          "resources": [
+            "https://github.com/SWE-agent/SWE-agent",
+            "https://swe-agent.com/latest/"
+          ],
+          "practiceNote": "固定初始快照与动作输入，区分可重放操作和外部副作用。",
+          "exercise": {
+            "title": "失败轨迹重放",
+            "goal": "恢复初始仓库并重放保存的动作，检查失败能否复现。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "05.5-P1"
+          }
+        },
+        {
+          "title": "基准与现实差异",
+          "scope": "任务覆盖、环境假设和分布变化。",
+          "evidence": "列出基准无法覆盖的真实环境问题。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "05.6",
+          "resources": [
+            "https://arxiv.org/abs/2307.13854",
+            "https://arxiv.org/abs/2405.15793",
+            "https://github.com/SWE-agent/SWE-agent",
+            "https://swe-agent.com/latest/"
+          ],
+          "practiceNote": "核对基准的环境假设、任务覆盖和真实部署差异。",
+          "exercise": {
+            "title": "基准任务覆盖审查",
+            "goal": "从练习仓库和网页任务中列出权限、状态变化与覆盖缺口。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "05.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2307.13854",
+          "title": "WebArena: A Realistic Web Environment for Building Autonomous Agents",
+          "authors": [
+            "Zhou, Shuyan",
+            "Xu, Frank F.",
+            "Zhu, Hao",
+            "Zhou, Xuhui",
+            "Lo, Robert",
+            "Sridhar, Abishek",
+            "Cheng, Xianyi",
+            "Ou, Tianyue",
+            "Bisk, Yonatan",
+            "Fried, Daniel",
+            "Alon, Uri",
+            "Neubig, Graham"
+          ],
+          "date": "2023-07-25",
+          "url": "https://arxiv.org/abs/2307.13854",
+          "question": "网页任务如何定义与验证？环境与真实网站有哪些差异？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "WebArena"
+        },
+        {
+          "kind": "paper",
+          "id": "2405.15793",
+          "title": "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering",
+          "authors": [
+            "Yang, John",
+            "Jimenez, Carlos E.",
+            "Wettig, Alexander",
+            "Lieret, Kilian",
+            "Yao, Shunyu",
+            "Narasimhan, Karthik",
+            "Press, Ofir"
+          ],
+          "date": "2024-05-06",
+          "url": "https://arxiv.org/abs/2405.15793",
+          "question": "Agent-Computer Interface 如何影响软件修复能力？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "SWE-agent"
+        },
+        {
+          "kind": "official",
+          "title": "SWE-agent · 官方文档",
+          "url": "https://swe-agent.com/latest/",
+          "question": "运行环境、配置和轨迹如何组织？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "SWE-agent / SWE-agent",
+          "url": "https://github.com/SWE-agent/SWE-agent",
+          "question": "观察、动作、环境反馈和测试结果如何连接？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        }
+      ],
+      "project": {
+        "title": "隔离环境中的仓库修复任务",
+        "goal": "让 Agent 在临时仓库中修复一个可测试的问题。",
+        "status": "planned",
+        "steps": [
+          "准备带失败测试的小型练习仓库和隔离环境。",
+          "接入读文件、修改与运行测试的动作。",
+          "检查补丁、测试结果和工作区变化。"
+        ],
+        "acceptance": [
+          "初始失败可以稳定复现。",
+          "完成与否由实际测试和文件检查决定。",
+          "限制执行资源与可访问目录。",
+          "记录修改前后状态及失败轨迹。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "05-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "06",
+      "dir": "06-multi-agent-collaboration",
+      "title": "多 Agent 协作",
+      "english": "Multi-Agent Collaboration",
+      "summary": "先验证协作是否必要，再研究分工、通信和共享状态。",
+      "keywords": "AutoGen MetaGPT A2A multi-agent 协作 消息 分工",
+      "prerequisites": [
+        "01",
+        "02",
+        "07"
+      ],
+      "units": [
+        {
+          "title": "协作必要性与基线",
+          "scope": "单 Agent 基线、并行子任务与角色隔离。",
+          "evidence": "在同一任务上解释需要分工的证据。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "06.1",
+          "resources": [
+            "https://arxiv.org/abs/2308.08155",
+            "https://arxiv.org/abs/2308.00352",
+            "https://github.com/microsoft/autogen"
+          ],
+          "practiceNote": "先保留单 Agent 基线，用任务证据判断分工是否有收益。",
+          "exercise": {
+            "title": "单角色与双角色对照",
+            "goal": "在同一任务集上比较单 Agent 与执行、复核双角色。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "06.1-P1"
+          }
+        },
+        {
+          "title": "协作结构",
+          "scope": "主管、对等、顺序交接和并行汇总。",
+          "evidence": "画出消息路径、责任边界和汇总方式。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "06.2",
+          "resources": [
+            "https://arxiv.org/abs/2308.08155",
+            "https://arxiv.org/abs/2308.00352",
+            "https://github.com/microsoft/autogen"
+          ],
+          "practiceNote": "明确消息方向、责任归属和最终汇总者。",
+          "exercise": {
+            "title": "主管与顺序交接对照",
+            "goal": "实现两种协作结构，比较交接次数和结果完整性。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "06.2-P1"
+          }
+        },
+        {
+          "title": "共享状态与产物契约",
+          "scope": "私有上下文、公共事实、冲突和产物校验。",
+          "evidence": "证明交接信息完整且冲突可识别。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "06.3",
+          "resources": [
+            "https://arxiv.org/abs/2308.00352",
+            "https://github.com/microsoft/autogen",
+            "https://a2a-protocol.org/latest/"
+          ],
+          "practiceNote": "为共享事实和交付物定义结构，校验缺失与矛盾。",
+          "exercise": {
+            "title": "交接产物校验器",
+            "goal": "让两个角色提交结构化产物，检测缺字段和冲突事实。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "06.3-P1"
+          }
+        },
+        {
+          "title": "协调、终止与预算",
+          "scope": "重复劳动、循环讨论、死锁和全局预算。",
+          "evidence": "模拟无共识场景并验证任务可结束。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "06.4",
+          "resources": [
+            "https://arxiv.org/abs/2308.08155",
+            "https://github.com/microsoft/autogen",
+            "https://a2a-protocol.org/latest/"
+          ],
+          "practiceNote": "将全局预算和结束决定交给协调器，防止无限讨论。",
+          "exercise": {
+            "title": "分歧与循环终止实验",
+            "goal": "构造双方反复否定的任务，验证能在预算内结束并报告原因。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "06.4-P1"
+          }
+        },
+        {
+          "title": "A2A 与 MCP 边界",
+          "scope": "Agent 之间的任务交互与 Agent 对工具的访问。",
+          "evidence": "说明协议职责，避免把多个模型调用等同于 A2A。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "06.5",
+          "resources": [
+            "https://github.com/microsoft/autogen",
+            "https://a2a-protocol.org/latest/"
+          ],
+          "practiceNote": "分清 Agent 任务交接和工具访问，并检查协议版本。",
+          "exercise": {
+            "title": "Agent 交接与工具访问图",
+            "goal": "用本地模拟任务演示角色交接，标明 A2A 和 MCP 应处层次。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "06.5-P1"
+          }
+        },
+        {
+          "title": "协作评估",
+          "scope": "成功率、信息损失、成本与延迟对比。",
+          "evidence": "与单 Agent 基线比较，并记录协作的额外代价。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "06.6",
+          "resources": [
+            "https://arxiv.org/abs/2308.08155",
+            "https://arxiv.org/abs/2308.00352",
+            "https://github.com/microsoft/autogen"
+          ],
+          "practiceNote": "同时报告结果质量、交接损失和协作增加的成本。",
+          "exercise": {
+            "title": "协作收益与失败分析",
+            "goal": "固定模型、任务和预算，分析双角色相对单 Agent 的收益。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "06.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2308.08155",
+          "title": "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+          "authors": [
+            "Wu, Qingyun",
+            "Bansal, Gagan",
+            "Zhang, Jieyu",
+            "Wu, Yiran",
+            "Li, Beibin",
+            "Zhu, Erkang",
+            "Jiang, Li",
+            "Zhang, Xiaoyun",
+            "Zhang, Shaokun",
+            "Liu, Jiale",
+            "Awadallah, Ahmed Hassan",
+            "White, Ryen W",
+            "Burger, Doug",
+            "Wang, Chi"
+          ],
+          "date": "2023-08-16",
+          "url": "https://arxiv.org/abs/2308.08155",
+          "question": "多 Agent 对话如何组织工具与人工参与？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "AutoGen"
+        },
+        {
+          "kind": "paper",
+          "id": "2308.00352",
+          "title": "MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework",
+          "authors": [
+            "Hong, Sirui",
+            "Zhuge, Mingchen",
+            "Chen, Jiaqi",
+            "Zheng, Xiawu",
+            "Cheng, Yuheng",
+            "Zhang, Ceyao",
+            "Wang, Jinlin",
+            "Wang, Zili",
+            "Yau, Steven Ka Shing",
+            "Lin, Zijuan",
+            "Zhou, Liyang",
+            "Ran, Chenyu",
+            "Xiao, Lingfeng",
+            "Wu, Chenglin",
+            "Schmidhuber, Jürgen"
+          ],
+          "date": "2023-08-01",
+          "url": "https://arxiv.org/abs/2308.00352",
+          "question": "标准化角色与产物如何约束协作？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "MetaGPT"
+        },
+        {
+          "kind": "official",
+          "title": "A2A · 官方文档与规范",
+          "url": "https://a2a-protocol.org/latest/",
+          "question": "任务生命周期、发现和消息传递如何定义？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "microsoft / autogen",
+          "url": "https://github.com/microsoft/autogen",
+          "question": "研究论文实现与当前框架接口有哪些区别？先核对版本和维护状态。",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        }
+      ],
+      "project": {
+        "title": "单 Agent 与双角色协作比较",
+        "goal": "用研究与核验两个角色完成带来源的资料整理任务。",
+        "status": "planned",
+        "steps": [
+          "建立单 Agent 基线和明确的结果评分标准。",
+          "实现两个角色及结构化交接。",
+          "测量成本、成功率和交接丢失信息。"
+        ],
+        "acceptance": [
+          "使用相同任务集与公平预算。",
+          "汇总结果能追溯原始证据。",
+          "循环对话和重复劳动有明确上限。",
+          "报告协作获益和退化的案例。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "06-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "07",
+      "dir": "07-evaluation-and-observability",
+      "pageLayout": "subtopics",
+      "title": "评估、可观测性与持续改进",
+      "english": "Evaluation & Continuous Improvement",
+      "summary": "贯穿上线前后，建立线上效果、bad cases 与离线回归之间的改进闭环。",
+      "keywords": "online evaluation offline evaluation observability Langfuse bad cases tracing drift A/B rubrics 评分细则 线上 监控 评测",
+      "prerequisites": [
+        "01"
+      ],
+      "units": [
+        {
+          "title": "离线评测与发布门槛",
+          "scope": "固定任务集、基准、回归测试、数据隔离与重复试验。",
+          "evidence": "定义任务完成标准，比较版本，并保留独立评测数据。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "07.1",
+          "resources": [
+            "https://raw.githubusercontent.com/RUC-NLPIR/Rubrics_Survey/28258b1489f5869d5ab3cf58ad5001dd3539ecf1/Rubrics_Survey.pdf",
+            "https://arxiv.org/abs/2308.03688",
+            "https://arxiv.org/abs/2406.12045",
+            "https://github.com/THUDM/AgentBench",
+            "https://langfuse.com/docs/evaluation/overview",
+            "https://arxiv.org/abs/2303.16634",
+            "https://github.com/nlpyang/geval",
+            "https://docs.langchain.com/langsmith/llm-as-judge",
+            "https://arxiv.org/abs/2506.07982v1",
+            "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+            "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
+            "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0"
+          ],
+          "practiceNote": "隔离评测数据，固定版本和任务标准，重复运行检查波动。设计任务专属的 rubrics（评分细则）：明确评价维度、各档分数的判定描述、通过条件、严重失败条件，以及正常、边界和失败示例。能核验的任务结果优先用环境断言检查，主观质量再用评分细则评审，避免总分掩盖关键失败；固定评分细则版本再比较系统版本。",
+          "exercise": {
+            "title": "离线回归与发布门槛",
+            "goal": "建立含正常、边界和失败任务的小型评测集，比较两个版本。提交带评分维度、分档描述、通过条件、严重失败条件和人工审核示例的 rubric；用同一版细则评估两个版本，分别报告环境结果检查与质量评分。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "07.1-P1"
+          }
+        },
+        {
+          "title": "线上评估与用户反馈",
+          "scope": "真实任务结果、采样、异步评分、延迟反馈和人工标注。",
+          "evidence": "区分实际成功、用户反馈与自动评分，并说明各自覆盖范围。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "07.2",
+          "resources": [
+            "https://github.com/langfuse/langfuse",
+            "https://docs.langchain.com/langsmith/online-evaluations",
+            "https://langfuse.com/docs/evaluation/overview",
+            "https://langfuse.com/docs/evaluation/core-concepts"
+          ],
+          "practiceNote": "区分真实结果、用户反馈和自动分数，记录采样与反馈延迟。",
+          "exercise": {
+            "title": "异步质量评分与反馈关联",
+            "goal": "用明确标注的模拟流量关联执行、异步评分和人工反馈。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "07.2-P1"
+          }
+        },
+        {
+          "title": "执行可观测性",
+          "scope": "关联会话、模型、检索、工具动作、环境结果和版本。",
+          "evidence": "能从一次失败定位到相关输入、动作与结果，敏感数据已处理。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "07.3",
+          "resources": [
+            "https://github.com/langfuse/langfuse",
+            "https://langfuse.com/docs/observability/overview",
+            "https://langfuse.com/docs/observability/best-practices"
+          ],
+          "practiceNote": "每次模型调用与工具动作分别记录；稳定命名并关联版本。",
+          "exercise": {
+            "title": "端到端执行追踪",
+            "goal": "记录一次含检索和工具调用的运行，按关联 ID 定位失败步骤。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "07.3-P1"
+          }
+        },
+        {
+          "title": "效果趋势与变化监控",
+          "scope": "按任务、用户群和版本分组；监控输入变化与质量下降。",
+          "evidence": "定义质量指标的分母、采样方式和告警复核条件。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "07.4",
+          "resources": [
+            "https://github.com/langfuse/langfuse",
+            "https://langfuse.com/docs/observability/overview",
+            "https://langfuse.com/docs/evaluation/overview"
+          ],
+          "practiceNote": "按任务、版本和样本量分组，告警后复核采样和输入变化。",
+          "exercise": {
+            "title": "质量趋势与异常复核",
+            "goal": "注入一批有质量退化的模拟任务，输出分组趋势和复核记录。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "07.4-P1"
+          }
+        },
+        {
+          "title": "Bad-case 归因与回归",
+          "scope": "发现、去重、分类、复现、修复和加入测试集。",
+          "evidence": "将一个真实或明确标注为模拟的失败转为可重复的回归用例。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "07.5",
+          "resources": [
+            "https://arxiv.org/abs/2406.12045",
+            "https://github.com/langfuse/langfuse",
+            "https://langfuse.com/docs/evaluation/overview",
+            "https://docs.langchain.com/langsmith/llm-as-judge",
+            "https://arxiv.org/abs/2506.07982v1",
+            "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+            "https://langfuse.com/docs/evaluation/core-concepts"
+          ],
+          "practiceNote": "保留脱敏轨迹和复现条件，让修复接受固定回归集检验。区分 Agent 失败与评分器误判，将经人工复核的典型失败和边界案例整理为 rubrics（评分细则）的判定示例。修订细则时保留旧版与修改原因，对可比样本按新旧标准重评；校准示例与独立评测数据隔离，避免修改标准制造表面提升。",
+          "exercise": {
+            "title": "失败案例转回归用例",
+            "goal": "把一个模拟失败转成可复现用例，修复后重跑原有任务集。关联适用的 rubric 版本、评分维度、预期判定和人工复核；若发现评分器误判，另行记录修正示例及对独立评测样本的复核结果。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "07.5-P1"
+          }
+        },
+        {
+          "title": "评估器校准与线上实验",
+          "scope": "规则、模型裁判、人工评审；偏差、一致性和 A/B 试验。",
+          "evidence": "检查自动评估与人工判断的一致性，区分评分趋势和因果证据。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "07.6",
+          "resources": [
+            "https://raw.githubusercontent.com/RUC-NLPIR/Rubrics_Survey/28258b1489f5869d5ab3cf58ad5001dd3539ecf1/Rubrics_Survey.pdf",
+            "https://arxiv.org/abs/2306.05685",
+            "https://github.com/langfuse/langfuse",
+            "https://docs.langchain.com/langsmith/online-evaluations",
+            "https://langfuse.com/docs/evaluation/overview",
+            "https://arxiv.org/abs/2303.16634",
+            "https://github.com/nlpyang/geval",
+            "https://docs.langchain.com/langsmith/llm-as-judge",
+            "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+            "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
+            "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0"
+          ],
+          "practiceNote": "用人工样本校准裁判；评分一致性与 A/B 因果比较分开报告。人工与模型使用同一版 rubrics（评分细则），以正例、反例和边界例明确各档含义，独立评分后逐维度检查分歧，分别分析标准含糊、证据不足和裁判偏差。用校准集修订细则和示例，在独立保留集检查一致性及严重失败的误判；记录 rubric、裁判模型和提示词版本，不能把高一致率当作任务成功的证明。",
+          "exercise": {
+            "title": "裁判校准与实验设计",
+            "goal": "对同一批样本做人工和模型评分，并设计独立的 A/B 试验方案。提交版本化 rubric 和审核示例，记录逐维度分歧、人工裁定与修订理由；在未用于修订的样本上报告一致性、误判及局限。评分一致性、任务结果和 A/B 因果比较分别报告。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "07.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "rubrics-survey-2026",
+          "title": "The Rules of the Game: A Survey of Rubrics for Large Language Models",
+          "shortTitle": "Rubrics Survey / 构造与评估",
+          "authors": [
+            "Wenhan Liu",
+            "Jiajie Jin",
+            "Zhaoheng Huang",
+            "Tongyu Wen",
+            "Guanting Dong",
+            "Ziliang Zhao",
+            "Yutao Zhu",
+            "Zhicheng Dou",
+            "Ji-Rong Wen"
+          ],
+          "date": "2026-05-19",
+          "dateLabel": "作者稿日期",
+          "publication": "作者公开稿",
+          "url": "https://raw.githubusercontent.com/RUC-NLPIR/Rubrics_Survey/28258b1489f5869d5ab3cf58ad5001dd3539ecf1/Rubrics_Survey.pdf",
+          "question": "如何构造清晰、可核验且有区分度的 rubrics，并用它们评估 LLM 与 Agent 的执行过程及最终结果？",
+          "status": "read",
+          "verification": "用户于 2026-10-16 确认已读完，特别认可 How to construct rubrics 和 Using rubrics to evaluate LLMs；实际读完日期及所读版本未指定。leo 已核对作者仓库固定 commit 的 PDF 标题、作者、日期，以及第 3、5 节相关内容；未复现所引研究。",
+          "checkedAt": "2026-10-16",
+          "notes": {
+            "method": "重点一：How to construct rubrics，对应已核对作者稿第 3 节 Rubrics Construction（第 10–17 页）。综述将构造方法分为直接生成、对比生成、迭代改进、在线及共同演化；从输入信号、输出形式和质量要求比较方法。第 3.1 节强调区分度、覆盖、原子性与可核验性、偏好对齐、冗余控制和动态稳健性；第 3.6 节讨论对 rubric 本身的评价。",
+            "evidence": "重点二：Using rubrics to evaluate LLMs，对应作者稿第 5 节 Rubrics for Evaluation（第 23–28 页）。第 5.1 节按推理、深度研究与开放生成、Agent 能力、对齐整理通用评估；第 5.2 节区分中间轨迹与最终输出，后者覆盖事实性、安全、表达与结构、实用性与可操作性。这是综述对既有研究的归纳，不是本仓库的实验结果，也不代表已逐篇核验所引论文。",
+            "conclusions": "用户已读完并评价较好，明确表示上述两个部分帮助很大。将构造方法作为 07.1 设计任务评分细则的重点参考，将细则的执行与评估作为 07.6 裁判校准的重点参考；后续学习优先围绕这两部分展开。该学习安排是用户反馈与本仓库的组织选择。",
+            "limitations": "来源为作者维护的公开 PDF，封面日期 2026-05-19；本次固定仓库 commit 28258b1489f5869d5ab3cf58ad5001dd3539ecf1，不能据此断言与用户所读版本相同。综述分类不证明任何一种构造方法对所有任务更优；评分细则和模型裁判仍可能偏离人工标准或实际任务结果。尚未核实正式录用信息，不将作者稿标为已发表版本。读完该论文不等于完成整个子课题或实践。",
+            "practice": "作者配套文献库：https://github.com/RUC-NLPIR/Rubrics_Survey；已核对 README 与仓库内 PDF，它是文献索引，不是可直接运行的评估引擎。可复现实验计划（尚未执行）：固定一项 Agent 任务、数据和模型版本，分别用任务描述直接生成细则、用人工偏好对生成细则，经过逐条核验、拆分和去重后，用同一裁判在独立样本上比较人工一致性与关键失败误判，分别记录执行过程、最终结果、费用和延迟。校准集与独立评测集隔离；没有实验输出可报告。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2308.03688",
+          "title": "AgentBench: Evaluating LLMs as Agents",
+          "authors": [
+            "Liu, Xiao",
+            "Yu, Hao",
+            "Zhang, Hanchen",
+            "Xu, Yifan",
+            "Lei, Xuanyu",
+            "Lai, Hanyu",
+            "Gu, Yu",
+            "Ding, Hangliang",
+            "Men, Kaiwen",
+            "Yang, Kejuan",
+            "Zhang, Shudan",
+            "Deng, Xiang",
+            "Zeng, Aohan",
+            "Du, Zhengxiao",
+            "Zhang, Chenhui",
+            "Shen, Sheng",
+            "Zhang, Tianjun",
+            "Su, Yu",
+            "Sun, Huan",
+            "Huang, Minlie",
+            "Dong, Yuxiao",
+            "Tang, Jie"
+          ],
+          "date": "2023-08-07",
+          "url": "https://arxiv.org/abs/2308.03688",
+          "localFile": "07-evaluation-and-observability/material/AGENTBENCH_EVALUATING LLMS_AS_AGENTS.pdf",
+          "question": "交互任务如何评估？基准成功率能代表哪些能力？",
+          "status": "read",
+          "verification": "用户于 2026-10-29 确认已读完；实际读完日期及所读版本未指定。leo 此前已核对原始页面标题与摘要，尚未核对全文；本次按用户反馈更新阅读状态，未记录代码复现或实验结果。；2026-10-30 为 07-P1 架构修订选读相关方法与局限，详见项目 v0.2 资料依据；未运行或复现。",
+          "checkedAt": "2026-10-30",
+          "shortTitle": "AgentBench",
+          "notes": {
+            "conclusions": "用户于 2026-10-29 确认已读完该论文；本条记录阅读进度，尚未提供具体阅读心得。",
+            "limitations": "实际读完日期及所读版本未指定。leo 此前仅核对原始页面标题与摘要，未核对全文；暂无代码复现或实验结果记录。\n选读相关章节；这是多环境基准，不能直接套用其任务权重或推断客服上线质量。本轮未运行代码。",
+            "evidence": "2026-10-30 架构选读：§2、§3、§4.3 区分交互状态、任务结果与终止原因。用于任务分组、失败分类和执行记录。"
+          },
+          "verificationHistory": [
+            {
+              "checkedAt": "2026-10-16",
+              "verification": "用户于 2026-10-29 确认已读完；实际读完日期及所读版本未指定。leo 此前已核对原始页面标题与摘要，尚未核对全文；本次按用户反馈更新阅读状态，未记录代码复现或实验结果。",
+              "status": "read",
+              "notes": {
+                "conclusions": "用户于 2026-10-29 确认已读完该论文；本条记录阅读进度，尚未提供具体阅读心得。",
+                "limitations": "实际读完日期及所读版本未指定。leo 此前仅核对原始页面标题与摘要，未核对全文；暂无代码复现或实验结果记录。"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "paper",
+          "id": "2306.05685",
+          "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+          "authors": [
+            "Zheng, Lianmin",
+            "Chiang, Wei-Lin",
+            "Sheng, Ying",
+            "Zhuang, Siyuan",
+            "Wu, Zhanghao",
+            "Zhuang, Yonghao",
+            "Lin, Zi",
+            "Li, Zhuohan",
+            "Li, Dacheng",
+            "Xing, Eric P.",
+            "Zhang, Hao",
+            "Gonzalez, Joseph E.",
+            "Stoica, Ion"
+          ],
+          "date": "2023-06-09",
+          "url": "https://arxiv.org/abs/2306.05685",
+          "question": "模型裁判有哪些偏差？对话偏好判断的结论能否迁移到 Agent 行动？",
+          "status": "reading",
+          "verification": "已核对原始页面标题与摘要；全文待读；2026-10-30 为 07-P1 架构修订选读相关方法与局限，详见项目 v0.2 资料依据；未运行或复现。",
+          "checkedAt": "2026-10-30",
+          "shortTitle": "LLM-as-a-Judge / MT-Bench",
+          "verificationHistory": [
+            {
+              "checkedAt": "2026-10-16",
+              "verification": "已核对原始页面标题与摘要；全文待读",
+              "status": "queued"
+            }
+          ],
+          "notes": {
+            "evidence": "2026-10-30 架构选读：§3.3–3.5 分析位置、冗长与上下文问题；成对顺序对照与完整对话上下文为裁判校准提供依据。",
+            "limitations": "核对 §3.3–3.5、§4.1–4.2。人类偏好一致性取决于样本与平局处理，不能把论文的高一致率当作通用业务准确率。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2406.12045",
+          "title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+          "authors": [
+            "Yao, Shunyu",
+            "Shinn, Noah",
+            "Razavi, Pedram",
+            "Narasimhan, Karthik"
+          ],
+          "date": "2024-06-17",
+          "url": "https://arxiv.org/abs/2406.12045",
+          "question": "最终环境状态、领域规则和多次运行的一致性如何检查？",
+          "status": "reading",
+          "verification": "已核对原始页面标题与摘要；全文待读；2026-10-30 为 07-P1 架构修订选读相关方法与局限，详见项目 v0.2 资料依据；未运行或复现。",
+          "checkedAt": "2026-10-30",
+          "shortTitle": "tau-bench",
+          "verificationHistory": [
+            {
+              "checkedAt": "2026-10-16",
+              "verification": "已核对原始页面标题与摘要；全文待读",
+              "status": "queued"
+            }
+          ],
+          "notes": {
+            "evidence": "2026-10-30 架构选读：§3（pp. 3–5）区分客户设定、工具和隐藏目标，提出 pass^k；明确指出最终结果正确仍可能缺少客户确认。用于业务断言、信息隔离与重复可靠性。",
+            "limitations": "核对 §3–6 相关内容；零售与航空模拟不能代表所有客服业务，也不能证明线上效果。对话无需逐字一致；本项目动作合规门槛属于进一步的工程设计。"
+          }
+        },
+        {
+          "kind": "official",
+          "title": "Langfuse · Evaluation Overview",
+          "url": "https://langfuse.com/docs/evaluation/overview",
+          "question": "线上评分、数据集、实验与回归如何形成闭环？",
+          "status": "reading",
+          "verification": "已核对与分类讨论相关的文档；尚未实践",
+          "checkedAt": "2026-10-16",
+          "notes": {
+            "method": "官方概览将生产执行记录的评分、案例入库、实验比较和评估组织为一个持续循环。",
+            "evidence": "文档明确区分线上生产记录评估与离线预定义数据集实验，并列出用户反馈、人工标注和自动评分能力。",
+            "conclusions": "据此把线上评估、效果监控和失败回归共同放入第七类。分类选择是本仓库的学习组织约定。",
+            "limitations": "平台文档说明可用能力，不证明某个 Agent 或自动评估器已经准确，也不替代业务任务结果检查。",
+            "practice": "尚未接入系统；计划先用明确标注的模拟生产记录练习。"
+          }
+        },
+        {
+          "kind": "official",
+          "title": "LangSmith · Online Evaluations",
+          "url": "https://docs.langchain.com/langsmith/online-evaluations",
+          "question": "生产执行的采样评估如何运作，如何控制成本？",
+          "status": "reading",
+          "verification": "已核对与分类讨论相关的文档；尚未实践；2026-10-30 为 07-P1 架构修订选读相关方法与局限，详见项目 v0.2 资料依据；未运行或复现。",
+          "checkedAt": "2026-10-30",
+          "notes": {
+            "method": "在生产执行记录上按过滤条件应用评估器，并通过采样率控制覆盖范围。",
+            "evidence": "官方文档给出把采样率设为 0.1、评估 10% 匹配记录以控制成本的例子。\n2026-10-30 架构选读：核对按运行或会话评估、筛选规则、采样与后台回填。用于标注线上评分覆盖范围与反馈延迟。",
+            "conclusions": "线上评估强调生产任务来源；不能把对样本的评分当作全量任务的精确成功率。",
+            "limitations": "采样和过滤可能引入选择偏差，自动评分需要与人工和实际任务结果校准。该点是我们的工程判断。\n核对相关文档，未接入 SDK。文档中的示例采样率不是通用标准；自动评分趋势不构成发布的因果证据。",
+            "practice": "尚未配置评估器或运行实验。"
+          },
+          "verificationHistory": [
+            {
+              "checkedAt": "2026-10-16",
+              "verification": "已核对与分类讨论相关的文档；尚未实践",
+              "status": "reading",
+              "notes": {
+                "method": "在生产执行记录上按过滤条件应用评估器，并通过采样率控制覆盖范围。",
+                "evidence": "官方文档给出把采样率设为 0.1、评估 10% 匹配记录以控制成本的例子。",
+                "conclusions": "线上评估强调生产任务来源；不能把对样本的评分当作全量任务的精确成功率。",
+                "limitations": "采样和过滤可能引入选择偏差，自动评分需要与人工和实际任务结果校准。该点是我们的工程判断。",
+                "practice": "尚未配置评估器或运行实验。"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "github",
+          "title": "langfuse / langfuse",
+          "url": "https://github.com/langfuse/langfuse",
+          "question": "执行记录、评分、人工标注、用户反馈与数据集如何关联？",
+          "status": "reading",
+          "verification": "已核对 README；代码尚未运行",
+          "checkedAt": "2026-10-16",
+          "notes": {
+            "version": "2026-10-16 核对 main 分支 README；后续代码调研时固定具体 commit。",
+            "modules": "README 声明支持模型裁判、代码评估器、用户反馈、人工标注和数据集；尚未追踪实现模块。",
+            "execution": "尚未安装、运行或接入实验，不报告运行效果。",
+            "limitations": "README 中的能力描述不代表已验证集成，也不能直接作为 Agent 任务效果的证据。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "THUDM / AgentBench",
+          "url": "https://github.com/THUDM/AgentBench",
+          "question": "如何固定基准任务与执行环境，如何选择原论文版本或后续函数调用版本？",
+          "verification": "已核对 README：当前实现为 AgentBench FC；复现原论文需固定历史版本。代码尚未运行",
+          "status": "queued",
+          "checkedAt": "2026-10-16"
+        },
+        {
+          "kind": "official",
+          "title": "Langfuse · Observability Overview",
+          "url": "https://langfuse.com/docs/observability/overview",
+          "question": "如何关联模型、工具、检索、输入输出与质量分数？",
+          "verification": "已阅读官方概览，核对追踪与质量监控的关系；SDK 尚未接入",
+          "status": "queued",
+          "checkedAt": "2026-10-16"
+        },
+        {
+          "kind": "official",
+          "title": "Langfuse · What does a good trace look like?",
+          "url": "https://langfuse.com/docs/observability/best-practices",
+          "question": "如何确定 trace 范围、嵌套、稳定命名和输入输出？",
+          "verification": "已阅读官方最佳实践章节；尚未用真实执行验证",
+          "status": "queued",
+          "checkedAt": "2026-10-16"
+        },
+        {
+          "kind": "paper",
+          "id": "2303.16634",
+          "title": "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment",
+          "shortTitle": "G-Eval / 评分细则",
+          "authors": [
+            "Yang Liu",
+            "Dan Iter",
+            "Yichong Xu",
+            "Shuohang Wang",
+            "Ruochen Xu",
+            "Chenguang Zhu"
+          ],
+          "date": "2023-05-23",
+          "url": "https://arxiv.org/abs/2303.16634",
+          "localFile": "07-evaluation-and-observability/material/evaluation using GPT-4 with Better human aligment.pdf",
+          "question": "如何将评价维度和评分细则组织成模型裁判的结构化评审？与人工判断的一致性有哪些边界？",
+          "status": "read",
+          "verification": "用户于 2026-10-30 确认已阅读；leo 已核对 arXiv 标题、作者、摘要、v3 日期与原仓库流畅性评分提示词，并选读 §2–4 相关方法与局限；本仓库未运行或复现实验。",
+          "checkedAt": "2026-10-30",
+          "notes": {
+            "method": "论文使用任务定义、评价维度、评价步骤和结构化评分组织模型评审；原仓库的流畅性提示词为 1 至 3 分分别给出文字判定描述。",
+            "evidence": "摘要报告摘要生成和对话生成两类实验；摘要任务上报告与人工判断的 Spearman 相关系数 0.514。该数字为作者报告，本项目未复现。版本为 v3（2023-05-23），初稿发表于 2023-03-29。\n2026-10-30 架构选读：§2 以任务定义、评价维度、评价步骤和结构化评分组织模型评审。用于明确各维度判定标准。",
+            "conclusions": "该资料可用于学习评价维度、分档描述与结构化评分。将严重失败条件、环境断言和 rubric 版本管理纳入本项目，是待验证的工程建议。",
+            "limitations": "摘要与对话生成任务中的相关性不证明模型裁判对任意 Agent 行动都准确；论文也观察到对模型生成文本的潜在偏好。不能把论文结果直接外推为客服工具任务成功或本项目评估效果。",
+            "practice": "关联原始实现 https://github.com/nlpyang/geval。计划固定 commit，检查 prompts/summeval/flu_detailed.txt，按 README 在明确版本的样本上运行评分及人工一致性分析，记录输入、输出、费用和局限；尚未执行。"
+          },
+          "verificationHistory": [
+            {
+              "checkedAt": "2026-10-16",
+              "verification": "已核对 arXiv 标题、作者、摘要与 v3 日期，并查看原仓库流畅性评分提示词；论文全文待读，实验未运行",
+              "status": "queued",
+              "notes": {
+                "method": "摘要介绍使用推理步骤与表单填写方式评价生成文本；原仓库的流畅性提示词为 1 至 3 分分别给出文字判定描述。尚未分析论文全文。",
+                "evidence": "摘要报告摘要生成和对话生成两类实验；摘要任务上报告与人工判断的 Spearman 相关系数 0.514。该数字为作者报告，本项目未复现。版本为 v3（2023-05-23），初稿发表于 2023-03-29。",
+                "conclusions": "该资料可用于学习评价维度、分档描述与结构化评分。将严重失败条件、环境断言和 rubric 版本管理纳入本项目，是待验证的工程建议。",
+                "limitations": "摘要任务中的相关性不证明模型裁判对任意 Agent 行动都准确；论文摘要也提示对模型生成文本的潜在偏好。仅查看摘要与一个提示词，不能视为阅读全文或验证评估效果。",
+                "practice": "关联原始实现 https://github.com/nlpyang/geval。计划固定 commit，检查 prompts/summeval/flu_detailed.txt，按 README 在明确版本的样本上运行评分及人工一致性分析，记录输入、输出、费用和局限；尚未执行。"
+              }
+            },
+            {
+              "checkedAt": "2026-10-30",
+              "verification": "用户确认已阅读 G-Eval；本仓库保留原论文版本与方法边界说明，尚未运行原始实现或复现实验。",
+              "status": "read",
+              "notes": {
+                "conclusions": "已将 G-Eval 作为 07.1 评分细则与 07.6 评估器校准的阅读依据。",
+                "limitations": "论文与原始实现的结果不能直接证明客服 Agent 任务成功或本项目裁判准确。"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "official",
+          "title": "LangSmith · How to define an LLM-as-a-judge evaluator",
+          "shortTitle": "LangSmith / Rubrics 与人工校准",
+          "url": "https://docs.langchain.com/langsmith/llm-as-judge",
+          "question": "如何定义评分细则、选择反馈类型，并用人工纠正示例帮助模型裁判与人工标准对齐？",
+          "status": "reading",
+          "verification": "已阅读官方页面中评分标准、反馈类型和人工纠正示例相关内容；未配置或运行评估器",
+          "checkedAt": "2026-10-16",
+          "notes": {
+            "method": "配置裁判提示词、模型、输入与参考输出映射，并定义反馈名称、含义及类型；文档将反馈配置中的评分标准称为 rubric。",
+            "evidence": "文档列出布尔、分类和连续三种反馈类型，并说明可将人工纠正加入提示词作为少样本示例。已核对官方页面的对应说明，未验证实际效果。",
+            "conclusions": "评分细则需要说明评价对象、维度与判定方式。按任务补充分档描述、严重失败条件、审核示例、版本管理和独立校准验证，是本项目的工程建议，并非文档对所有任务效果的保证。",
+            "limitations": "配置能力不证明评分准确；人工示例也可能有偏差。仍需检查人工分歧、模型误判和实际环境结果，不能仅凭分数上升推断发布带来的因果改善。",
+            "practice": "计划在 07.1 编写任务 rubric，在 07.6 比较人工与模型评分，在 07.5 整理经复核的误判示例。尚未运行评分或校准实验。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "nlpyang / geval",
+          "shortTitle": "G-Eval / 原始评分实现",
+          "url": "https://github.com/nlpyang/geval",
+          "question": "原始实现如何把评价维度、分档描述、评分调用和人工一致性分析连接起来？",
+          "status": "reading",
+          "verification": "已核对 main 分支 README 与 prompts/summeval/flu_detailed.txt；未安装、运行或追踪完整调用链",
+          "checkedAt": "2026-10-16",
+          "notes": {
+            "version": "2026-10-16 查看 main 分支 README 与流畅性提示词，尚未固定 commit；复现前需固定代码、依赖、模型与数据版本。",
+            "maintenance": "本次仅核对可访问的原仓库 README 与提示词；未核实最近提交、发布、依赖兼容性或当前维护状态，不据此推荐直接用于生产。",
+            "modules": "README 给出 gpt4_eval.py 的评分命令和 meta_eval_summeval.py 的人工一致性分析命令；prompts/summeval/flu_detailed.txt 定义流畅性维度及 1 至 3 分的判定描述。文件调用关系尚未追踪。",
+            "execution": "尚未安装或执行。计划按 README 固定运行环境，在版本明确的样本上保存评分输入输出，再检查与人工评分的一致性及失败案例；没有结果可报告。",
+            "limitations": "对应 G-Eval 论文 https://arxiv.org/abs/2303.16634。已核对的提示词只评价新闻摘要流畅性，不能用作所有 Agent 任务的通用 rubric，也不证明任务已经完成。"
+          }
+        },
+        {
+          "kind": "paper",
+          "title": "τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment",
+          "shortTitle": "τ²-Bench / 双控制与任务可验证性",
+          "url": "https://arxiv.org/abs/2506.07982v1",
+          "question": "本资料如何支持客服 Agent 的可验证结果、评估器可靠性与持续改进？",
+          "status": "read",
+          "verification": "2026-10-30 已阅读 Abstract/introduction、§3.1–3.3、§4.2–4.3、Table 2、§5、Appendix B/E；未运行或复现论文实验。",
+          "checkedAt": "2026-10-30",
+          "id": "2506.07982",
+          "localFile": "07-evaluation-and-observability/material/2506.07982v1.pdf",
+          "authors": [
+            "Barres, Victor",
+            "Dong, Honghua",
+            "Ray, Soham",
+            "Si, Xujie",
+            "Narasimhan, Karthik"
+          ],
+          "date": "2025-06-09",
+          "notes": {
+            "method": "§3.1–3.3 定义双方的动作／观测空间、独立数据库与共享历史；用 init／solution／assert 原子子任务组合可验证任务；§3.3 支持状态、沟通、自然语言和动作断言。§4.2 用 Default、No-User、Oracle Plan 拆分推理与协作；§4.3、Appendix B/E 先排查实现和任务规格，再按每个用户回合审计 guideline、instruction、tool-use、natural continuation，并区分 critical／benign 错误。",
+            "evidence": "已核对论文原文与本地 PDF：07-evaluation-and-observability/material/2506.07982v1.pdf；记录为方法依据，未声称复现实验结果。",
+            "conclusions": "支持将双控制客户工具、任务可行性门、动作／历史断言、模拟器质量审计和配对诊断加入 07-P1 架构 v0.3。",
+            "limitations": "telecom 模拟环境不代表所有客服业务；论文报告的用户模拟器错误说明必须保留审计；未完整建模 expert–novice 差异；本项目尚无实现或本地实验。",
+            "practice": "按 v0.3 架构实现任务工厂、双状态环境与模拟器审计；比较结果需记录任务／工具／persona／模式版本和真实业务证据。"
+          }
+        },
+        {
+          "kind": "official",
+          "title": "Demystifying evals for AI agents",
+          "shortTitle": "Anthropic / Agent 评估实践",
+          "url": "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+          "question": "本资料如何支持客服 Agent 的可验证结果、评估器可靠性与持续改进？",
+          "status": "reading",
+          "verification": "2026-10-30 为 07-P1 架构 v0.2 核对相关章节；未运行、复现或验证评估效果。",
+          "checkedAt": "2026-10-30",
+          "notes": {
+            "method": "区分 task、trial、trace、outcome、grader；隔离试验，组合程序、模型和人工评估，并将离线测试、线上监测与 A/B 分开。",
+            "evidence": "核对来源：https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+            "conclusions": "用于 07-P1 的架构设计；完整方案与验收门槛仍需实践验证。",
+            "limitations": "阅读术语、会话 Agent、非确定性、实施步骤和评估组合相关章节。属于官方工程经验，不是对本架构的实验验证。",
+            "practice": "在独立项目页 07-P1 中记录后续实现、输入输出、比较条件与实际结果；本轮未执行实验。"
+          }
+        },
+        {
+          "kind": "official",
+          "title": "Langfuse · Evaluation Core Concepts",
+          "shortTitle": "Langfuse / 质量闭环",
+          "url": "https://langfuse.com/docs/evaluation/core-concepts",
+          "question": "本资料如何支持客服 Agent 的可验证结果、评估器可靠性与持续改进？",
+          "status": "reading",
+          "verification": "2026-10-30 为 07-P1 架构 v0.2 核对相关章节；未运行、复现或验证评估效果。",
+          "checkedAt": "2026-10-30",
+          "notes": {
+            "method": "Evaluation Loop、Scores、Evaluators and rules：把评分关联到执行记录，区分评分方法与采样规则，把复核后的线上问题补入评测集。",
+            "evidence": "核对来源：https://langfuse.com/docs/evaluation/core-concepts",
+            "conclusions": "用于 07-P1 的架构设计；完整方案与验收门槛仍需实践验证。",
+            "limitations": "核对核心概念页面。平台能保存分数不代表该分数准确；固定数据集回归也可在上线后继续运行。",
+            "practice": "在独立项目页 07-P1 中记录后续实现、输入输出、比较条件与实际结果；本轮未执行实验。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "τ-bench v2.0.0 · Task Schema and Evaluation",
+          "shortTitle": "τ-bench v2 / 固定版本实现",
+          "url": "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
+          "question": "本资料如何支持客服 Agent 的可验证结果、评估器可靠性与持续改进？",
+          "status": "reading",
+          "verification": "2026-10-30 为 07-P1 架构 v0.2 核对相关章节；未运行、复现或验证评估效果。",
+          "checkedAt": "2026-10-30",
+          "notes": {
+            "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+            "maintenance": "2026-10-30 核对公开仓库与发布记录：仓库未归档，最近提交为 2026-10-29；本次参考 v2.0.0（发布于 2026-10-20）。",
+            "modules": "核对 evaluation、domains、orchestrator、user_simulator 与 judge-validation：参考动作可以只是有效路径之一；检查项是否影响最终奖励由配置决定；评估器需要独立验证。",
+            "execution": "仅阅读相关文档与代码；未安装或运行。",
+            "limitations": "固定 v2.0.0 的文档与关键代码，未安装或运行。默认数据库哈希判定与本项目定向业务断言不同；部分自然语言检查与裁判默认项仍有实验性或未验证范围。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "τ-bench 2.0.0 — Multilingual and Voice",
+          "shortTitle": "τ-bench v2 / 版本可比性",
+          "url": "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0",
+          "question": "本资料如何支持客服 Agent 的可验证结果、评估器可靠性与持续改进？",
+          "status": "reading",
+          "verification": "2026-10-30 为 07-P1 架构 v0.2 核对相关章节；未运行、复现或验证评估效果。",
+          "checkedAt": "2026-10-30",
+          "notes": {
+            "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+            "maintenance": "2026-10-30 核对公开仓库与发布记录：仓库未归档，最近提交为 2026-10-29；本次参考 v2.0.0（发布于 2026-10-20）。",
+            "modules": "发布说明明确 v2.0 与 1.x 分数不可比较；运行指南分别记录失败、未评分、缺失和基础设施错误。用于冻结完整评估配置与说明分母。",
+            "execution": "仅阅读相关文档与代码；未安装或运行。",
+            "limitations": "核对发布说明与运行指南的 Scoring、Pass^3 等章节。新实现不等于原始论文；语音／多语言功能属于可选扩展，不据此扩大本项目当前范围。"
+          }
+        }
+      ],
+      "project": {
+        "title": "Agent 效果评估与 bad-case 闭环",
+        "purpose": "客服 Agent 上线前后质量评估、发布决策与 bad-case 回归",
+        "goal": "用一组有真实结果断言的任务串联离线评测、模拟线上采样与失败回归。",
+        "status": "planned",
+        "steps": [
+          "定义任务成功标准，收集版本化执行记录。",
+          "对模拟生产记录采样，组合规则、模型裁判和人工复核。",
+          "分类失败、复现问题，将修复验证加入离线测试。"
+        ],
+        "acceptance": [
+          "模拟流量明确标为模拟，不当作真实生产效果。",
+          "HTTP 或工具调用成功不等同于任务完成。",
+          "评分器、规则与 Agent 版本均可追踪。",
+          "失败案例含预期、实际、证据、归因和回归验证。",
+          "质量评分使用版本化 rubric，含评价维度、分档描述、严重失败条件及人工审核示例；环境结果检查单独报告。",
+          "人工与模型评分分歧有复核记录，校准样本与独立评测样本分开；修改细则不能代替修复任务失败。",
+          "业务最终状态与动作时的授权／确认分别验证；评分细则的高分不得抵消任务或政策硬条件失败。",
+          "每个场景可独立初始化；重复试验保存全部尝试、终止原因、有效性和分母，清楚区分 pass^k 与 pass@k。",
+          "基线与候选版本使用相同场景与评估配置；评分规则变化时重评，报告人工校准范围、误判和未确定事项。",
+          "上线后关联真实业务结果、采样覆盖与延迟反馈，将经复核问题转为回归案例；线上趋势与 A/B 因果结论分开。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "architecture": {
+          "title": "客服 Agent 评估系统",
+          "version": "0.3",
+          "date": "2026-10-30",
+          "summary": "验证客服 Agent 是否把事情办对、按规则办完，并能在用户也会操作的双控制场景中稳定重复做到。系统把可验证任务、业务结果、操作合规和沟通质量分别检查，再用线上反馈持续改进。",
+          "statusNote": "设计方案，尚未实现或运行评估实验。v0.3 根据 τ²-Bench 原文补充双控制状态、可组合任务与模拟器审计；发布门槛和评估效果仍需用本项目数据验证。",
+          "components": [
+            {
+              "id": "recordings",
+              "title": "业务证据",
+              "original": true,
+              "summary": "历史对话、业务结果与经复核的反馈。",
+              "input": "有权使用的客服会话、工具事件、订单等业务状态和延迟反馈；保留原始案例编号。",
+              "output": "脱敏后的来源资料、时间范围与样本分布说明。",
+              "rule": "兼顾正常、边界、拒绝、转人工与失败案例；历史话术不是唯一标准答案，模拟变体必须标注。"
+            },
+            {
+              "id": "conversion",
+              "title": "场景审核",
+              "summary": "提取客户目标、事实与政策，验证场景可执行。",
+              "input": "业务证据、当时适用的政策与知识、可恢复的初始状态。",
+              "output": "经过审核的场景、来源记录、未知事实和可接受结果。",
+              "rule": "先验证初始化和参考解确实可行；不把历史客服错误写成标准答案。没有依据的事实保持未知。"
+            },
+            {
+              "id": "taskFactory",
+              "title": "任务生成与可行性验证",
+              "summary": "把原子子任务组合成可复现、可验证且难度可控的任务。",
+              "input": "经过审核的客户目标、初始状态、业务工具与政策；原子子任务的初始化、解决动作和最终断言。",
+              "output": "版本化任务、可行性检查结果、动作数／子任务数、用户 persona 和数据划分元数据。",
+              "rule": "先运行初始化与完整解决动作，再执行断言并确认未提前满足；统一工具形式、mock 环境单测，复核欠约束、过约束和非唯一解。程序化生成是可选能力，不替代人工审核。"
+            },
+            {
+              "id": "scenarios",
+              "title": "场景与标准库",
+              "original": true,
+              "summary": "版本化保存场景、结果断言、评分细则和数据划分。",
+              "input": "经过审核的案例、批准使用的业务政策和明确记录的假设。",
+              "output": "场景编号；客户专用事实；初始状态；政策与知识版本；业务结果与动作合规断言；评分细则；开发、校准与独立评测划分。",
+              "rule": "关联案例与变体按组划分；隐藏标准与参考解不发给 Agent 或模拟器。评测样本用于开发后，记录用途变化。"
+            },
+            {
+              "id": "runner",
+              "title": "评估运行器",
+              "summary": "隔离每次试验，编排交互并记录终止原因。",
+              "input": "评估场景与运行配置：固定 Agent、模拟器、工具、数据、政策、知识和评估器版本，并指定重复次数、轮次、时长及费用上限。",
+              "output": "相互隔离的试验、路由后的消息与工具调用、运行编号、终止原因和执行证据。",
+              "rule": "每次从新的会话与业务状态开始。结束、拒绝、转人工、超时、循环与基础设施错误分别记录；结束不等于成功。重试保留原失败记录。"
+            },
+            {
+              "id": "simulator",
+              "title": "客户模拟器",
+              "original": true,
+              "summary": "依照客户事实与目标，对最新消息作出回应。",
+              "input": "客户专用的场景设定，以及截至当前客户可见的对话内容。",
+              "output": "下一条客户消息、澄清、同意、拒绝或转人工请求。",
+              "rule": "只读取客户可见的信息，使用客户侧工具获得人类可读结果，并根据 Agent 请求反应式回应；不自主规划、不提供隐藏解法，定期按用户指令、工具使用和对话连续性人工审计。"
+            },
+            {
+              "id": "customerState",
+              "title": "客户侧工具与状态",
+              "summary": "保存客户可见的设备／账户状态，并提供受约束的客户工具。",
+              "input": "每次试验的客户初始状态、版本化客户工具和 Agent 的可执行指令。",
+              "output": "仅客户可见的人类可读工具结果、状态变化与对话观察。",
+              "rule": "与 Agent 侧状态和私有观测隔离；工具只支持按请求的反应式操作，不暴露隐藏标准或 Agent 私有结果，状态变化可追溯。"
+            },
+            {
+              "id": "agent",
+              "title": "被评估 Agent",
+              "original": true,
+              "summary": "使用自身策略、政策、知识与工具完成客户请求。",
+              "input": "客户消息、批准使用的政策与知识访问方式、工具定义和执行结果。",
+              "output": "面向客户的回复、工具调用和转人工请求。",
+              "rule": "固定实际待比较的 Agent 配置；不提供参考解、模拟器指令或隐藏评分标准。评估的是 Agent 整体，而不仅是单次模型回答。"
+            },
+            {
+              "id": "sandbox",
+              "title": "Agent 侧业务环境",
+              "summary": "保存业务世界状态，并执行 Agent 可用的读写工具。",
+              "input": "业务初始状态、版本化 Agent 工具约定，以及 Agent 实际发起的工具调用。",
+              "output": "工具返回结果，以及创建退货、记录退款等可观察的业务状态变化。",
+              "rule": "与客户侧状态隔离，必要时通过明确的共享动态结果产生影响；按工具约定执行读写和权限检查，隔离试验与副作用，不写入真实客户系统。"
+            },
+            {
+              "id": "evidence",
+              "title": "执行证据",
+              "summary": "关联双方消息、工具、私有观测、共享状态、版本和费用。",
+              "input": "来自运行器、客户模拟器、被评估 Agent 和业务环境的事件，通过运行编号与案例编号关联。",
+              "output": "场景编号、试验编号、消息与工具轨迹、双方可见观测、初末状态、共享历史、版本清单、终止原因、耗时、token 与成本。",
+              "rule": "成功、失败和未评分试验都保存；区分 Agent／用户私有观测与共享状态，以执行事件和真实状态支撑判定。"
+            },
+            {
+              "id": "validity",
+              "title": "试验有效性",
+              "summary": "先排查实现、任务规格、模拟器和环境问题，再判断试验是否可评分。",
+              "input": "任务元数据、初始化与工具检查、双控制轨迹，以及实现、任务规格、模拟器和环境错误证据。",
+              "output": "按责任归类的有效、无效或无法判定标签，并附证据和原因。",
+              "rule": "实现错误、任务规格错误、模拟器错误与 Agent 失败分开记录；Agent 自身超时、循环或违规不能随意标为无效，证据不足时交人工复核。"
+            },
+            {
+              "id": "simulatorAudit",
+              "title": "模拟器质量审计",
+              "summary": "按用户每一轮检查模拟器是否遵守设定、工具约束与对话规则。",
+              "input": "用户指令、persona、可用客户工具、完整消息与工具轨迹，以及任务与环境检查结果。",
+              "output": "指南遵循（guideline）、任务指令（instruction）、工具使用（tool-use）、自然连续性（natural continuation）四类标签，关键／一般错误、双人标注分歧与可靠性统计。",
+              "rule": "先确认实现和任务规格无误，再抽样由两名标注者复核；关键错误与可恢复错误分开，不能把模拟器错误直接计为 Agent 失败或成功。"
+            },
+            {
+              "id": "outcomes",
+              "title": "业务与政策检查",
+              "summary": "核验业务目标、必要信息，以及动作时的授权和确认。",
+              "input": "评估器专用的验收标准、适用政策、完整工具与消息轨迹，以及业务初始和最终状态。",
+              "output": "业务结果、动作合规、必要沟通以及轨迹／历史断言的独立检查项，附证据、通过／失败／未知与严重程度。",
+              "rule": "能程序验证的事实优先用状态断言；按任务需要检查必需动作是否出现、历史中是否表达必要事实，并接受等效有效路径。最终状态正确不代表确认时序合规。"
+            },
+            {
+              "id": "rubric",
+              "title": "沟通质量评估",
+              "summary": "按明确细则逐维度评分，标明证据与不确定性。",
+              "input": "版本化评分细则、对话及相关执行证据，以及与任务匹配的参考事实和校准示例。",
+              "output": "各项评分、支撑证据，以及存在不确定性或分歧的判定。",
+              "rule": "裁判固定模型、提示词与细则版本；检查位置、长度和风格偏好。使用相关完整上下文，允许未知；质量分不能抵消任务或政策失败。"
+            },
+            {
+              "id": "review",
+              "title": "人工复核与校准",
+              "summary": "复核严重失败和分歧，并抽查通过与无效试验。",
+              "input": "试验有效性、模拟器逐轮审计、任务结果和评分细则的检查结果，以及底层轨迹和客户场景。",
+              "output": "人工审核标签、关键／一般模拟器错误、待确定案例，以及有依据的场景或评估器修订。",
+              "rule": "校准样本与独立验证样本分离；记录双人分歧、错误类型和修改理由。先修复任务或模拟器问题，再判断 Agent；修改评估标准不能替代修复真正的 Agent 问题。"
+            },
+            {
+              "id": "report",
+              "title": "版本比较与发布决策",
+              "summary": "报告任务通过、违规、重复可靠性、质量和成本。",
+              "input": "逐次试验结果、有效性标签、人工复核，以及所比较版本的固定运行配置。",
+              "output": "按任务分组的基线／候选结果、全部尝试与各类分母、重复可靠性、误判、质量、耗时与费用，以及待复核事项。",
+              "rule": "比较条件和发布门槛预先确定。评分标准变化需重评；部分样本不能伪装成完整基准结果，模拟提升不能直接当作线上因果改善。"
+            },
+            {
+              "id": "diagnostics",
+              "title": "对照诊断",
+              "summary": "用同一任务配对比较双控制、no-user 与可选 oracle plan。",
+              "input": "固定任务、工具、状态、政策和版本；双控制、no-user、oracle plan 的运行结果。",
+              "output": "推理、协作沟通和长程执行的差异，以及按 persona、动作数和子任务数分层的诊断。",
+              "rule": "只把配对差异用于归因线索，不当作线上因果结论；no-user 与 oracle plan 是可选诊断模式，必须报告各自配置和适用范围。"
+            },
+            {
+              "id": "regression",
+              "title": "失败归因与回归",
+              "summary": "复现问题、修复负责的组件，再跑原案例和固定测试集。",
+              "input": "经过复核的失败案例，及其准确的任务、Agent、工具、模拟器和评估器版本。",
+              "output": "可复现的失败案例、有针对性的修复和回归证据；返回运行器开展下一轮比较。",
+              "rule": "分别归因 Agent、场景、模拟器、环境与评估器。校准与独立评测隔离；同一问题链接全局 Bad cases 记录，修复后保留回归与上线验证证据。"
+            },
+            {
+              "id": "online",
+              "title": "线上观察与反馈",
+              "summary": "关联真实业务结果、采样评分、用户反馈与版本。",
+              "input": "真实会话与执行记录、业务结果和延迟反馈；明确的采样规则、任务类型、版本与用户分组。",
+              "output": "质量趋势、采样覆盖、待复核案例和发布后的实际结果；重要案例进入场景库。",
+              "rule": "区分单次调用与完整会话、自动分数与业务结果、模拟与真实流量。线上评估可异步；效果趋势不能代替随机 A/B 因果证据。"
+            }
+          ],
+          "routing": [
+            {
+              "label": "客户目标与已知事实",
+              "target": "simulator",
+              "detail": "仅提供客户可见的设定、对话与客户侧工具结果。"
+            },
+            {
+              "label": "客户初始状态与工具",
+              "target": "customerState",
+              "detail": "仅客户模拟器可见；返回人类可读结果，不暴露 Agent 私有观测。"
+            },
+            {
+              "label": "业务政策、知识与工具",
+              "target": "agent",
+              "detail": "使用获准访问的信息；不包含隐藏标准或参考解。"
+            },
+            {
+              "label": "Agent 侧业务状态",
+              "target": "sandbox",
+              "detail": "每次试验独立重置；必要时以明确的共享状态变化影响客户侧观察。"
+            },
+            {
+              "label": "隐藏验收标准与评分细则",
+              "target": "outcomes",
+              "detail": "仅供业务／政策检查、轨迹断言与质量评估器使用。"
+            }
+          ],
+          "example": {
+            "title": "示例场景：客户申请退回一副耳机",
+            "setup": "这是人为构造的示例，尚未执行测试：订单 123 在五天前送达，客户因改变主意申请退货；商品状态和其他退货政策条件均已明确满足。",
+            "expected": "Agent 核验身份、取得必要确认并创建正确的退货记录，同时准确说明后续步骤。如果政策要求收到退货后才退款，此时不应立即退款。",
+            "boundary": "以上均为说明架构的人为示例，尚未执行。客户可走不同的有效对话路径；拒绝、转人工是否成功，由每个场景的目标与政策事先确定。",
+            "cases": [
+              {
+                "title": "核验身份、取得确认，创建正确退货记录并说明后续步骤。",
+                "decision": "可判任务通过；沟通质量另评。",
+                "reason": "业务目标、必要信息与动作合规均有证据。"
+              },
+              {
+                "title": "回复“退货已办理”，但业务系统中没有退货记录。",
+                "decision": "业务失败。",
+                "reason": "流畅的回答不能证明动作已完成。"
+              },
+              {
+                "title": "退货记录正确，但未取得必要确认就执行；或违规提前退款。",
+                "decision": "政策失败。",
+                "reason": "正确的最终状态不能抵消未经授权的操作。"
+              },
+              {
+                "title": "模拟器编造订单事实，或测试环境初始化出错。",
+                "decision": "试验无效或待复核。",
+                "reason": "保留证据和数量，先确定责任，不把这次试验直接算成 Agent 成功。"
+              }
+            ]
+          },
+          "sources": [
+            {
+              "id": "tau-bench",
+              "kind": "原始论文",
+              "title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+              "shortTitle": "τ-bench / 结果与重复可靠性",
+              "url": "https://arxiv.org/abs/2406.12045v1",
+              "authors": "Yao, Shunyu; Shinn, Noah; Razavi, Pedram et al.",
+              "date": "2024-06-17",
+              "version": "v1",
+              "supports": "§3（pp. 3–5）区分客户设定、工具和隐藏目标，提出 pass^k；明确指出最终结果正确仍可能缺少客户确认。用于业务断言、信息隔离与重复可靠性。",
+              "limitations": "核对 §3–6 相关内容；零售与航空模拟不能代表所有客服业务，也不能证明线上效果。对话无需逐字一致；本项目动作合规门槛属于进一步的工程设计。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/sierra-research/tau-bench"
+            },
+            {
+              "id": "tau2-bench",
+              "kind": "原始论文",
+              "title": "τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment",
+              "shortTitle": "τ²-Bench / 双控制与任务可验证性",
+              "url": "https://arxiv.org/abs/2506.07982v1",
+              "authors": "Barres, Victor; Dong, Honghua; Ray, Soham et al.",
+              "date": "2025-06-09",
+              "version": "v1",
+              "supports": "§3.1–3.3 将 Agent 与用户建模为各自工具、观测和状态的双控制交互；原子子任务用 init／solution／assert 组合并自动验证可行性；§3.3 支持状态、沟通、自然语言和动作断言；§4.2 提供 no-user／oracle plan 对照；§4.3、Appendix B/E 提供模拟器可靠性与逐轮质量审计。",
+              "limitations": "核对 §3.1–3.3、§4.2–4.3、§5、Appendix B/E；telecom 结果不能代表所有客服业务，用户模拟器仍有关键错误，论文未完整建模 expert–novice 差异。本项目没有运行论文实验。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/sierra-research/tau2-bench"
+            },
+            {
+              "id": "agentbench",
+              "kind": "原始论文",
+              "title": "AgentBench: Evaluating LLMs as Agents",
+              "shortTitle": "AgentBench / 交互与失败类型",
+              "url": "https://arxiv.org/abs/2308.03688v3",
+              "authors": "Liu, Xiao; Yu, Hao; Zhang, Hanchen et al.",
+              "date": "2025-10-04",
+              "version": "v3",
+              "supports": "§2、§3、§4.3 区分交互状态、任务结果与终止原因。用于任务分组、失败分类和执行记录。",
+              "limitations": "选读相关章节；这是多环境基准，不能直接套用其任务权重或推断客服上线质量。本轮未运行代码。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/THUDM/AgentBench"
+            },
+            {
+              "id": "mtbench",
+              "kind": "原始论文",
+              "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+              "shortTitle": "MT-Bench / 裁判偏差",
+              "url": "https://arxiv.org/abs/2306.05685v4",
+              "authors": "Zheng, Lianmin; Chiang, Wei-Lin; Sheng, Ying et al.",
+              "date": "2023-12-24",
+              "version": "v4",
+              "supports": "§3.3–3.5 分析位置、冗长与上下文问题；成对顺序对照与完整对话上下文为裁判校准提供依据。",
+              "limitations": "核对 §3.3–3.5、§4.1–4.2。人类偏好一致性取决于样本与平局处理，不能把论文的高一致率当作通用业务准确率。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/lm-sys/FastChat/tree/main/fastchat/llm_judge",
+              "citations": {
+                "count": 1856,
+                "url": "https://openalex.org/W7133239970",
+                "checkedAt": "2026-10-30",
+                "recordDoi": "https://doi.org/10.52202/075280-2020",
+                "updatedAt": "2026-10-29T09:56:32.521200"
+              }
+            },
+            {
+              "id": "geval",
+              "kind": "原始论文",
+              "title": "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment",
+              "shortTitle": "G-Eval / 评分细则",
+              "url": "https://arxiv.org/abs/2303.16634v3",
+              "authors": "Liu, Yang; Iter, Dan; Xu, Yichong et al.",
+              "date": "2023-05-23",
+              "version": "v3",
+              "supports": "§2 以任务定义、评价维度、评价步骤和结构化评分组织模型评审。用于明确各维度判定标准。",
+              "limitations": "核对 §2–4 相关内容；摘要与对话生成上的相关性不等于客服工具任务成功。论文也观察到对模型生成文本的潜在偏好。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/nlpyang/geval",
+              "citations": {
+                "count": 943,
+                "url": "https://openalex.org/W4389519254",
+                "checkedAt": "2026-10-30",
+                "recordDoi": "https://doi.org/10.18653/v1/2023.emnlp-main.153",
+                "updatedAt": "2026-10-29T09:56:32.521200"
+              }
+            },
+            {
+              "id": "anthropic",
+              "kind": "官方工程指南",
+              "title": "Demystifying evals for AI agents",
+              "shortTitle": "Anthropic / Agent 评估实践",
+              "url": "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+              "authors": "Anthropic",
+              "date": "2026-01-09",
+              "version": "在线文档，按核对日期记录",
+              "supports": "区分 task、trial、trace、outcome、grader；隔离试验，组合程序、模型和人工评估，并将离线测试、线上监测与 A/B 分开。",
+              "limitations": "阅读术语、会话 Agent、非确定性、实施步骤和评估组合相关章节。属于官方工程经验，不是对本架构的实验验证。",
+              "checkedAt": "2026-10-30"
+            },
+            {
+              "id": "langfuse",
+              "kind": "官方工程指南",
+              "title": "Langfuse · Evaluation Core Concepts",
+              "shortTitle": "Langfuse / 质量闭环",
+              "url": "https://langfuse.com/docs/evaluation/core-concepts",
+              "authors": "Langfuse",
+              "date": "2026-10-30 核对",
+              "version": "在线文档，按核对日期记录",
+              "supports": "Evaluation Loop、Scores、Evaluators and rules：把评分关联到执行记录，区分评分方法与采样规则，把复核后的线上问题补入评测集。",
+              "limitations": "核对核心概念页面。平台能保存分数不代表该分数准确；固定数据集回归也可在上线后继续运行。",
+              "checkedAt": "2026-10-30"
+            },
+            {
+              "id": "langsmith",
+              "kind": "官方工程指南",
+              "title": "LangSmith · Set up LLM-as-a-judge online evaluators",
+              "shortTitle": "LangSmith / 线上采样",
+              "url": "https://docs.langchain.com/langsmith/online-evaluations-llm-as-judge",
+              "authors": "LangChain",
+              "date": "2026-10-30 核对",
+              "version": "在线文档，按核对日期记录",
+              "supports": "核对按运行或会话评估、筛选规则、采样与后台回填。用于标注线上评分覆盖范围与反馈延迟。",
+              "limitations": "核对相关文档，未接入 SDK。文档中的示例采样率不是通用标准；自动评分趋势不构成发布的因果证据。",
+              "checkedAt": "2026-10-30"
+            },
+            {
+              "id": "tau2-code",
+              "kind": "固定版本实现",
+              "title": "τ-bench v2.0.0 · Task Schema and Evaluation",
+              "shortTitle": "τ-bench v2 / 固定版本实现",
+              "url": "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
+              "authors": "Sierra Research",
+              "date": "2026-10-30 核对",
+              "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+              "supports": "核对 evaluation、domains、orchestrator、user_simulator 与 judge-validation：参考动作可以只是有效路径之一；检查项是否影响最终奖励由配置决定；评估器需要独立验证。",
+              "limitations": "固定 v2.0.0 的文档与关键代码，未安装或运行。默认数据库哈希判定与本项目定向业务断言不同；部分自然语言检查与裁判默认项仍有实验性或未验证范围。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/sierra-research/tau2-bench"
+            },
+            {
+              "id": "tau2-release",
+              "kind": "固定版本实现",
+              "title": "τ-bench 2.0.0 — Multilingual and Voice",
+              "shortTitle": "τ-bench v2 / 版本可比性",
+              "url": "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0",
+              "authors": "Sierra Research",
+              "date": "2026-10-20",
+              "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+              "supports": "发布说明明确 v2.0 与 1.x 分数不可比较；运行指南分别记录失败、未评分、缺失和基础设施错误。用于冻结完整评估配置与说明分母。",
+              "limitations": "核对发布说明与运行指南的 Scoring、Pass^3 等章节。新实现不等于原始论文；语音／多语言功能属于可选扩展，不据此扩大本项目当前范围。",
+              "checkedAt": "2026-10-30",
+              "repository": "https://github.com/sierra-research/tau2-bench"
+            }
+          ],
+          "evidenceNote": "选取与客服任务直接相关的 τ 系列与 AgentBench，以及引用较多的 MT-Bench、G-Eval 作为方法依据；官方指南与固定版本实现用于核对工程细节。下方逐条说明支持的设计和局限。引用量来自 OpenAlex 的指定条目快照，不能当作质量排名。本文只完成资料选读与架构设计，没有运行论文实验或验证评估准确性。",
+          "flowCaption": "系统总览：从可信场景到线上回归",
+          "flow": [
+            {
+              "title": "准备并验证可信任务",
+              "summary": "把真实问题整理成可复现测试，先确认任务可解和成功标准。",
+              "components": [
+                "recordings",
+                "conversion",
+                "taskFactory",
+                "scenarios"
+              ]
+            },
+            {
+              "title": "运行隔离双控制试验",
+              "summary": "客户与 Agent 各自可操作并共享必要状态；每次从干净状态开始。",
+              "components": [
+                "runner",
+                "simulator",
+                "customerState",
+                "agent",
+                "sandbox",
+                "evidence"
+              ]
+            },
+            {
+              "title": "分层判定与质量审计",
+              "summary": "先区分试验责任，再核验结果、动作、沟通与模拟器质量。",
+              "components": [
+                "validity",
+                "simulatorAudit",
+                "outcomes",
+                "rubric",
+                "review"
+              ]
+            },
+            {
+              "title": "比较、诊断与决策",
+              "summary": "在相同评估条件下比较版本，并拆分推理、协作和复杂度影响。",
+              "components": [
+                "report",
+                "diagnostics"
+              ]
+            },
+            {
+              "title": "线上验证与回归",
+              "summary": "观察实际任务结果，将复核后的失败加入固定回归集。",
+              "components": [
+                "online",
+                "regression"
+              ]
+            }
+          ],
+          "feedback": "线上发现问题 → 人工复核与归因 → 修复负责的组件 → 重跑原案例与固定回归集。",
+          "designBasis": "图中的五步是本项目的工程组织方式。论文提供评估方法，官方指南提供实践经验，不能据此声称整套系统已验证有效。",
+          "flowSources": [
+            "anthropic",
+            "tau-bench",
+            "langfuse"
+          ],
+          "terms": [
+            {
+              "title": "场景（Task）",
+              "detail": "一个客户目标，加上初始业务状态、适用政策和明确的成功标准。"
+            },
+            {
+              "title": "试验（Trial）",
+              "detail": "在某个场景下完整跑一次 Agent。同一场景需要多次试验，观察是否稳定。"
+            },
+            {
+              "title": "执行轨迹（Trace）",
+              "detail": "这次试验实际发生的消息、工具调用、状态变化与终止原因。"
+            },
+            {
+              "title": "评估器（Grader）",
+              "detail": "根据证据作出一项判定的规则、程序、模型或人工评审；一项任务可以有多个评估器。"
+            }
+          ],
+          "runtime": {
+            "summary": "运行器负责初始化和路由；Agent 与客户模拟器轮流发送消息或调用各自工具，双方只看到被授权的观测，状态变化写入共享历史。历史对话用于构造场景，测试时允许出现不同但有效的对话路径。",
+            "control": "重置会话、Agent 侧业务状态和客户侧状态，固定版本，限制轮次、时长和费用；每个动作单独记录。",
+            "evidence": "关联场景编号与试验编号，保存双方消息、工具动作、私有观测、共享状态、初末状态、错误、耗时和费用。",
+            "boundary": "双控制运行中，客户侧工具只返回人类可读结果并按 Agent 请求反应式执行；模拟器不读取 Agent 的私有工具结果，也不决定是否通过。需要客户执行操作时再启用客户侧状态；一般退货场景可只保留业务侧状态。",
+            "sources": [
+              "tau-bench",
+              "tau2-bench",
+              "tau2-code"
+            ],
+            "sequence": [
+              "customerState",
+              "simulator",
+              "agent",
+              "sandbox"
+            ],
+            "edgeLabels": [
+              "客户工具／可见状态",
+              "客户消息／回复",
+              "Agent 工具／业务结果"
+            ]
+          },
+          "checkSummary": "各项结果分别保存。先区分试验有效性与评分状态，再核验状态、动作、沟通和质量；有效试验也可能因结果证据不足而待判定／未评分。",
+          "checks": [
+            {
+              "title": "1. 试验是否有效",
+              "evidence": "实现、任务规格、初始化、模拟器行为、环境检查和完整执行记录。",
+              "decision": "标记有效、无效或无法判定，并按责任保留理由。Agent 自身超时、循环或违规仍是失败。"
+            },
+            {
+              "title": "2. 业务是否完成",
+              "evidence": "目标业务状态、初末状态断言和必须告知客户的信息；优先使用程序可核验断言。",
+              "decision": "确认目标是否真正达成。正确拒绝或转人工，可以是场景事先定义的成功结果。"
+            },
+            {
+              "title": "3. 动作与政策是否合规",
+              "evidence": "动作发生时的身份权限、必要确认、政策版本、调用顺序和 action assertions。",
+              "decision": "检查先确认再执行、必需解决动作是否出现及禁止操作等硬条件；最终状态正确也可能失败。"
+            },
+            {
+              "title": "4. 沟通事实是否完整",
+              "evidence": "完整历史、客户可见消息、communication／natural-language assertions 和版本化细则。",
+              "decision": "检查必要事实是否传达、解释是否清晰；允许等效表达，模型质量分不能抵消任务或政策失败。"
+            },
+            {
+              "title": "5. 模拟器是否可靠",
+              "evidence": "用户每轮的 guideline、instruction、tool-use、natural continuation 标签与双人复核。",
+              "decision": "分别统计 critical 与 benign 错误；先排除模拟器或任务规格问题，再进入 Agent 评分。"
+            }
+          ],
+          "checkBoundary": "综合通过必须满足预先定义的任务与政策硬条件。动作／历史断言用于任务证据，不要求唯一参考轨迹；模型判定仍需在独立人工标注样本上检验。",
+          "checkSources": [
+            "tau-bench",
+            "tau2-bench",
+            "mtbench",
+            "geval"
+          ],
+          "metrics": [
+            {
+              "title": "任务通过率",
+              "meaning": "满足业务目标和政策硬条件的有效试验数 ÷ 有效试验数。",
+              "report": "同时给出全部尝试、有效、无效和有效但待判定／未评分的数量；按任务类型报告，说明未决项如何进入分母，避免平均值掩盖薄弱场景。"
+            },
+            {
+              "title": "严重违规率",
+              "meaning": "发生未经授权退款等预先定义严重违规的有效试验比例。",
+              "report": "违规类型、证据和人工复核结果；不能只报告平均质量分。"
+            },
+            {
+              "title": "重复可靠性 pass^k",
+              "meaning": "固定条件下，同一场景独立重复 k 次全部成功的可靠性；pass@k 则是至少一次成功。",
+              "report": "每场景计划 n ≥ k 次试验，逐场景计算后汇总，注明 n、k 与估计方法。不能将总体通过率直接取 k 次方；缺失或无效试验未补齐时，不报告该场景的完整重复可靠性。"
+            },
+            {
+              "title": "评估器误判",
+              "meaning": "用独立人工标注样本检查错判，重点看严重失败被误判为通过。",
+              "report": "人工标准、任务与语言范围、样本量、分歧和未知比例；一致性高不等于业务一定成功。"
+            },
+            {
+              "title": "沟通质量",
+              "meaning": "按同一版细则分别比较准确性、清晰度、有用性等维度。",
+              "report": "分数分布与典型证据。成对比较时控制答案顺序并复核分歧；不把模型偏好当作业务事实。"
+            },
+            {
+              "title": "耗时与费用",
+              "meaning": "分别记录用户等待时间、每次 Agent 执行成本和整次评估成本。",
+              "report": "样本量、延迟分位数、模型用量，以及模拟器和评估器费用；与质量结果关联，但不混成单一总分。"
+            },
+            {
+              "title": "协作差距（Default − No-User）",
+              "meaning": "同一任务、工具、状态和版本下，双控制与 no-user 的通过率差异。",
+              "report": "同时报告两种模式、任务分层、有效性和分母；这是推理与协作的诊断线索，不是线上因果效果。"
+            },
+            {
+              "title": "复杂度与 persona 分层",
+              "meaning": "按必需动作数、原子子任务数和用户 persona 分组观察可靠性。",
+              "report": "给出各组样本量、pass^k／通过率和关键失败类型，避免总体平均掩盖长程或沟通瓶颈。"
+            }
+          ],
+          "metricBoundary": "重复可靠性、模拟器错误和对照差异都依赖明确抽样与计算约定。发布判断应同时看样本量与不确定性；当前没有实际数据或经过验证的数值门槛。",
+          "metricSources": [
+            "tau-bench",
+            "agentbench",
+            "mtbench",
+            "anthropic"
+          ],
+          "release": {
+            "rules": [
+              "先冻结比较条件：任务生成器与版本、场景与划分、业务和客户初始状态、政策与知识、双方工具、客户模拟器、persona、评分细则和裁判版本。对基线与候选版本使用同一评估设置，重复试验并报告任务分组结果。",
+              "开发集用于修复，校准集用于改进评估器，独立评测集用于比较。由同一原始案例产生的变体放在同一划分；独立样本用于开发后，记录用途变化并补充新的保留样本。",
+              "按业务风险预先约定通过条件、严重违规处理与复核要求。模型或评分规则变化时，重新评估可比较样本，不能直接拼接不同标准下的分数。",
+              "需要客户主动操作的任务使用双控制；可选 no-user／oracle plan 仅用于配对诊断。离线通过后仍要检查真实业务结果、用户反馈、采样覆盖与延迟反馈；线上评分变化不替代随机 A/B 实验。"
+            ],
+            "versionNote": "版本实例：τ-bench v2.0.0 明确说明评分与 1.x 不可直接比较。τ²-Bench 进一步显示双控制、用户工具和任务复杂度会改变结果，因此比较时必须固定整个评估配置，而不只是 Agent 模型。",
+            "sources": [
+              "tau2-release",
+              "langsmith",
+              "anthropic"
+            ]
+          },
+          "revisions": [
+            "v0.1 · 2026-10-29：建立历史对话、客户模拟器、待测 Agent、业务环境与失败回归的基础方案。原始架构与来源核对记录完整保留。",
+            "v0.2 · 2026-10-30：依据原始论文与官方指南补充分层判定、重复可靠性、评估器校准、版本可比性及线上闭环；改为五步总览、单次试验图、判定表和退货示例。仍为待实现方案。",
+            "v0.3 · 2026-10-30：依据 τ²-Bench §3.1–3.3、§4.2–4.3、Appendix B/E 显式加入客户侧工具与状态、原子任务工厂与可行性门、模拟器逐轮审计、动作／历史断言及 no-user／oracle plan 对照诊断；补充 persona 与复杂度分层，并记录 expert–novice 局限。仍为待实现方案。"
+          ],
+          "inlineCitations": {
+            "runtime": [
+              "tau2-bench"
+            ],
+            "checks": [
+              "tau2-bench",
+              "mtbench"
+            ],
+            "metrics": [
+              "tau-bench",
+              "tau2-bench"
+            ],
+            "release": [
+              "tau2-bench",
+              "tau2-release"
+            ]
+          },
+          "limitations": "τ²-Bench 的 telecom 结果不能代表所有客服业务；论文没有完整建模 expert–novice 差异，且用户模拟器仍会出现关键错误。本架构的任务工厂、诊断模式和人工门槛是待验证的工程设计，不是论文实验结论。"
+        },
+        "experiments": [],
+        "id": "07-P1",
+        "architectureHistory": [
+          {
+            "version": "0.1",
+            "date": "2026-10-29",
+            "reason": "保留 v0.1 原始架构与资料核对记录。",
+            "architecture": {
+              "title": "客服 Agent 评估系统",
+              "version": "0.1",
+              "date": "2026-10-29",
+              "summary": "将历史对话转换为经过审核的场景，让客户模拟器与 Agent 动态交互，再依据实际任务结果和对话质量进行评估。",
+              "statusNote": "架构方案：尚未实现评估服务，也未运行 Agent 评估实验。",
+              "components": [
+                {
+                  "id": "recordings",
+                  "title": "历史对话记录",
+                  "original": true,
+                  "summary": "客户消息、Agent 回复，以及可获取的工具执行记录。",
+                  "input": "历史客服对话及关联的业务记录，保留来源，并确认具备使用权限。",
+                  "output": "完成脱敏的原始资料集，关联原始案例编号。",
+                  "rule": "历史对话只代表一条实际发生的路径，不能据此确定客户面对所有新问题时的回答。"
+                },
+                {
+                  "id": "conversion",
+                  "title": "场景转换与人工审核",
+                  "summary": "提取目标与事实，脱敏、核对并处理信息缺口。",
+                  "input": "历史对话，以及该案例当时适用的业务政策、知识文档和可获取的状态快照。",
+                  "output": "经过审核的客户事实、业务初始状态、可接受结果和来源记录。",
+                  "rule": "不要将原客服的错误复制为预期答案。缺失事实应标记为未知，从关联记录中补齐；人为补充的变体必须明确标为模拟。"
+                },
+                {
+                  "id": "scenarios",
+                  "title": "版本化评估场景",
+                  "original": true,
+                  "summary": "客户设定、初始状态，以及评估器专用的成功标准。",
+                  "input": "经过审核的案例、批准使用的业务政策和明确记录的假设。",
+                  "output": "案例编号与版本；客户目标、已知事实与行为设定；初始状态数据；政策和知识版本；结果断言与评分细则；数据集划分及来源链接。",
+                  "rule": "隔离开发集、裁判校准集和独立评测集；同一原始对话衍生的相关案例应放在同一数据划分中，避免泄漏。隐藏评估标准不得进入 Agent 或客户模拟器的提示词。"
+                },
+                {
+                  "id": "runner",
+                  "title": "评估运行器与交互编排",
+                  "summary": "逐次重置，路由消息与工具调用，重复试验并按限制终止。",
+                  "input": "评估场景与运行配置：固定 Agent、模拟器、工具、数据、政策、知识和评估器版本，并指定重复次数、轮次、时长及费用上限。",
+                  "output": "相互隔离的试验、路由后的消息与工具调用、运行编号、终止原因和执行证据。",
+                  "rule": "每次试验从全新的业务状态和 Agent 会话开始，允许走出新的对话路径。记录完成、转人工、拒绝、超时、循环或基础设施错误；模拟器发出结束信号不代表任务成功。"
+                },
+                {
+                  "id": "simulator",
+                  "title": "客户模拟器",
+                  "original": true,
+                  "summary": "根据客户目标、已知事实和最新回复，动态生成回应。",
+                  "input": "客户专用的场景设定，以及截至当前客户可见的对话内容。",
+                  "output": "下一条客户消息、澄清、同意、拒绝或转人工请求。",
+                  "rule": "保持事实和行为设定一致，自然地提供信息。不编造事实、不泄露解法、不读取 Agent 私有工具结果，也不决定测试结论。通过人工审核的真实对话检验模拟行为是否合理。"
+                },
+                {
+                  "id": "agent",
+                  "title": "被评估 Agent",
+                  "original": true,
+                  "summary": "接入待测 Agent，以及它的业务政策、知识和工具权限。",
+                  "input": "客户消息、批准使用的政策与知识访问方式、工具定义和执行结果。",
+                  "output": "面向客户的回复、工具调用和转人工请求。",
+                  "rule": "使用实际需要比较的 Agent 版本。不向它提供历史标准答案、模拟器指令或隐藏评分标准。有效的对话路径可以与历史记录不同。"
+                },
+                {
+                  "id": "sandbox",
+                  "title": "模拟业务环境",
+                  "summary": "可改变状态的工具，以及预置的订单、账户和支付数据。",
+                  "input": "业务初始状态数据、版本化工具约定，以及 Agent 实际发起的工具调用。",
+                  "output": "工具返回结果，以及创建退货、记录退款等可观察的业务状态变化。",
+                  "rule": "工具在可重置的测试系统中运行，并执行权限与业务约束。不回放与当前操作无关的历史工具结果，也不允许测试写入真实客户系统。"
+                },
+                {
+                  "id": "evidence",
+                  "title": "执行证据与运行记录",
+                  "summary": "消息、工具调用、状态变化、错误、费用和延迟。",
+                  "input": "来自运行器、客户模拟器、被评估 Agent 和业务环境的事件，通过运行编号与案例编号关联。",
+                  "output": "可回放的执行轨迹、初始与最终状态、版本清单、耗时、token 用量、费用和终止原因。",
+                  "rule": "保存每次试验的证据，包括失败试验。运行费用和延迟与质量评分分开记录；工具执行成功或最终回复流畅，都不能单独证明任务完成。"
+                },
+                {
+                  "id": "validity",
+                  "title": "模拟有效性检查",
+                  "summary": "客户事实是否一致？测试环境是否正常？",
+                  "input": "客户设定、对话轨迹、初始数据检查，以及模拟器或环境错误。",
+                  "output": "有效、无效或无法判定，并附上证据和原因。",
+                  "rule": "将模拟器偏离设定、初始数据故障与 Agent 失败分开归因。保留无效试验的数量和原因，不能悄悄丢弃，也不能将其记为 Agent 成功。"
+                },
+                {
+                  "id": "outcomes",
+                  "title": "任务结果与政策检查",
+                  "summary": "核对实际状态、必要的客户确认和禁止操作。",
+                  "input": "评估器专用的验收标准、适用政策、完整工具与消息轨迹，以及业务初始和最终状态。",
+                  "output": "任务成功与否及各项政策检查结果，逐项关联证据；按任务要求纳入正确拒绝和转人工。",
+                  "rule": "能够程序核验的结果优先使用断言。除了最终状态，也检查执行动作时是否具备权限和必要确认。接受等效的有效路径，不要求逐句匹配历史对话。"
+                },
+                {
+                  "id": "rubric",
+                  "title": "评分细则与模型裁判",
+                  "summary": "按维度评估正确性、清晰度、有用性和对话质量。",
+                  "input": "版本化评分细则、对话及相关执行证据，以及与任务匹配的参考事实和校准示例。",
+                  "output": "各项评分、支撑证据，以及存在不确定性或分歧的判定。",
+                  "rule": "使用人工审核案例校准，并在独立样本上验证。不能让较高的平均分抵消严重政策违规或实际业务任务失败。"
+                },
+                {
+                  "id": "review",
+                  "title": "人工复核与裁判校准",
+                  "summary": "复核评分分歧、严重失败，并抽查通过案例。",
+                  "input": "模拟有效性、任务结果和评分细则的检查结果，以及底层轨迹和客户场景。",
+                  "output": "人工审核标签、待确定案例，以及有依据的场景或评估器修订。",
+                  "rule": "区分 Agent、模拟器、业务环境和评估器的责任。保留原判定和修改理由，并核对模拟行为能否代表真实客户对话。"
+                },
+                {
+                  "id": "report",
+                  "title": "评估报告与版本比较",
+                  "summary": "汇总成功率、严重违规、无效试验、质量、费用和延迟。",
+                  "input": "逐次试验结果、有效性标签、人工复核，以及所比较版本的固定运行配置。",
+                  "output": "按任务类型和重复试验展示的结果、不确定性、经过复核的失败示例，以及依据预先定义门槛形成的发布建议。",
+                  "rule": "报告总尝试次数、有效、无效和无法判定的数量，并说明指标分母。采用可比较的场景集与模拟设置。模拟效果提升不代表真实客户效果提升，也不构成 A/B 因果证据。"
+                },
+                {
+                  "id": "regression",
+                  "title": "失败归因与回归验证",
+                  "summary": "定位、修复，并重跑原案例和固定测试集。",
+                  "input": "经过复核的失败案例，及其准确的任务、Agent、工具、模拟器和评估器版本。",
+                  "output": "可复现的失败案例、有针对性的修复和回归证据；返回运行器开展下一轮比较。",
+                  "rule": "修复真正负责的组件。裁判校准示例与独立评测数据隔离；当独立评测案例被用于开发时，记录用途变化，并保留新的独立评测集。"
+                }
+              ],
+              "routing": [
+                {
+                  "label": "客户场景设定",
+                  "target": "simulator",
+                  "detail": "仅提供目标、已知事实与行为设定"
+                },
+                {
+                  "label": "业务政策与知识",
+                  "target": "agent",
+                  "detail": "批准使用的操作规则与访问方式"
+                },
+                {
+                  "label": "业务初始状态",
+                  "target": "sandbox",
+                  "detail": "可重置的数据库与工具测试数据"
+                },
+                {
+                  "label": "隐藏评估标准",
+                  "target": "outcomes",
+                  "detail": "结果断言与评分细则，仅供评估器使用"
+                }
+              ],
+              "example": {
+                "title": "示例场景：客户申请退回一副耳机",
+                "setup": "这是人为构造的示例，尚未执行测试：订单 123 在五天前送达，客户因改变主意申请退货；商品状态和其他退货政策条件均已明确满足。",
+                "expected": "Agent 核验身份、取得必要确认并创建正确的退货记录，同时准确说明后续步骤。如果政策要求收到退货后才退款，此时不应立即退款。",
+                "boundary": "客户可以依据场景事实回答新的问题，采用其他有效对话路径也可以通过。客户编造事实会使模拟有效性存疑；未经授权退款则属于 Agent 失败。"
+              },
+              "sources": [
+                {
+                  "title": "τ-bench：任务定义与评估",
+                  "url": "https://github.com/sierra-research/tau2-bench/blob/7aad81c37a3a78b4ed3e4866769f851400c64415/docs/evaluation.md",
+                  "supports": "说明任务结果与沟通检查、环境断言，以及参考轨迹和唯一正确路径的区别。本架构采用针对任务的断言，不要求对整个数据库进行完全相同的哈希比对。"
+                },
+                {
+                  "title": "τ-bench：客户模拟器实现",
+                  "url": "https://github.com/sierra-research/tau2-bench/blob/7aad81c37a3a78b4ed3e4866769f851400c64415/src/tau2/user/user_simulator.py",
+                  "supports": "展示场景与行为设定、对话历史维护和下一条用户回应的生成方式。它不证明模拟用户能代表所有真实客户。"
+                },
+                {
+                  "title": "τ-bench：业务域结构",
+                  "url": "https://github.com/sierra-research/tau2-bench/blob/7aad81c37a3a78b4ed3e4866769f851400c64415/src/tau2/domains/README.md",
+                  "supports": "说明业务政策、工具、数据库、任务定义和数据集划分。"
+                },
+                {
+                  "title": "The Rules of the Game: A Survey of Rubrics for Large Language Models",
+                  "url": "https://raw.githubusercontent.com/RUC-NLPIR/Rubrics_Survey/28258b1489f5869d5ab3cf58ad5001dd3539ecf1/Rubrics_Survey.pdf",
+                  "supports": "第 3、5 节用于参考评分细则构造，以及对执行轨迹与最终输出的评估；用户已读完的记录保留在 07.1 和 07.6。"
+                }
+              ],
+              "evidenceNote": "τ-bench 文档与代码于 2026-10-29 核对，固定 commit 为 7aad81c37a3a78b4ed3e4866769f851400c64415；Rubrics Survey 相关章节已于 2026-10-16 核对。完整架构、人工复核门槛和回归流程是本练习的工程设计建议，并非对某个基准的完整复现。"
+            }
+          },
+          {
+            "version": "0.2",
+            "date": "2026-10-30",
+            "reason": "保留 τ²-Bench 阅读后形成的 v0.2 架构快照，便于比较本次双控制结构升级。",
+            "architecture": {
+              "title": "客服 Agent 评估系统",
+              "version": "0.2",
+              "date": "2026-10-30",
+              "summary": "验证客服 Agent 是否把事情办对、按规则办完，并能稳定地重复做到。系统把业务结果、操作合规和沟通质量分别检查，再用真实线上反馈持续改进。",
+              "statusNote": "设计方案，尚未实现或运行评估实验。下列结构综合论文与官方工程指南；发布门槛和评估效果仍需用本项目数据验证。",
+              "components": [
+                {
+                  "id": "recordings",
+                  "title": "业务证据",
+                  "original": true,
+                  "summary": "历史对话、业务结果与经复核的反馈。",
+                  "input": "有权使用的客服会话、工具事件、订单等业务状态和延迟反馈；保留原始案例编号。",
+                  "output": "脱敏后的来源资料、时间范围与样本分布说明。",
+                  "rule": "兼顾正常、边界、拒绝、转人工与失败案例；历史话术不是唯一标准答案，模拟变体必须标注。"
+                },
+                {
+                  "id": "conversion",
+                  "title": "场景审核",
+                  "summary": "提取客户目标、事实与政策，验证场景可执行。",
+                  "input": "业务证据、当时适用的政策与知识、可恢复的初始状态。",
+                  "output": "经过审核的场景、来源记录、未知事实和可接受结果。",
+                  "rule": "先验证初始化和参考解确实可行；不把历史客服错误写成标准答案。没有依据的事实保持未知。"
+                },
+                {
+                  "id": "scenarios",
+                  "title": "场景与标准库",
+                  "original": true,
+                  "summary": "版本化保存场景、结果断言、评分细则和数据划分。",
+                  "input": "经过审核的案例、批准使用的业务政策和明确记录的假设。",
+                  "output": "场景编号；客户专用事实；初始状态；政策与知识版本；业务结果与动作合规断言；评分细则；开发、校准与独立评测划分。",
+                  "rule": "关联案例与变体按组划分；隐藏标准与参考解不发给 Agent 或模拟器。评测样本用于开发后，记录用途变化。"
+                },
+                {
+                  "id": "runner",
+                  "title": "评估运行器",
+                  "summary": "隔离每次试验，编排交互并记录终止原因。",
+                  "input": "评估场景与运行配置：固定 Agent、模拟器、工具、数据、政策、知识和评估器版本，并指定重复次数、轮次、时长及费用上限。",
+                  "output": "相互隔离的试验、路由后的消息与工具调用、运行编号、终止原因和执行证据。",
+                  "rule": "每次从新的会话与业务状态开始。结束、拒绝、转人工、超时、循环与基础设施错误分别记录；结束不等于成功。重试保留原失败记录。"
+                },
+                {
+                  "id": "simulator",
+                  "title": "客户模拟器",
+                  "original": true,
+                  "summary": "依照客户事实与目标，对最新消息作出回应。",
+                  "input": "客户专用的场景设定，以及截至当前客户可见的对话内容。",
+                  "output": "下一条客户消息、澄清、同意、拒绝或转人工请求。",
+                  "rule": "只读取客户可见的信息，保持事实与行为一致，不提供隐藏解法。需要客户操作时，用客户侧工具结果约束事实；定期人工审核模拟行为。"
+                },
+                {
+                  "id": "agent",
+                  "title": "被评估 Agent",
+                  "original": true,
+                  "summary": "使用自身策略、政策、知识与工具完成客户请求。",
+                  "input": "客户消息、批准使用的政策与知识访问方式、工具定义和执行结果。",
+                  "output": "面向客户的回复、工具调用和转人工请求。",
+                  "rule": "固定实际待比较的 Agent 配置；不提供参考解、模拟器指令或隐藏评分标准。评估的是 Agent 整体，而不仅是单次模型回答。"
+                },
+                {
+                  "id": "sandbox",
+                  "title": "业务测试环境",
+                  "summary": "可重置的业务状态，以及真正执行状态变化的测试工具。",
+                  "input": "业务初始状态数据、版本化工具约定，以及 Agent 实际发起的工具调用。",
+                  "output": "工具返回结果，以及创建退货、记录退款等可观察的业务状态变化。",
+                  "rule": "按工具约定执行读写和基础权限检查；隔离试验、外部依赖和副作用，不写入真实客户系统。政策约束仍需在评估时核验。"
+                },
+                {
+                  "id": "evidence",
+                  "title": "执行证据",
+                  "summary": "关联消息、工具、初末状态、版本和费用。",
+                  "input": "来自运行器、客户模拟器、被评估 Agent 和业务环境的事件，通过运行编号与案例编号关联。",
+                  "output": "场景编号、试验编号、可获取的执行轨迹、初末状态、版本清单、终止原因、耗时、token 与成本。",
+                  "rule": "成功、失败和未评分试验都保存。以执行事件和真实状态支撑判定，不以工具 HTTP 成功或最终话术替代业务结果。"
+                },
+                {
+                  "id": "validity",
+                  "title": "试验有效性",
+                  "summary": "核对场景、模拟器、环境与证据是否可信。",
+                  "input": "客户设定、对话轨迹、初始数据检查，以及模拟器或环境错误。",
+                  "output": "有效、无效或无法判定，并附上证据和原因。",
+                  "rule": "有效、无效和无法判定分别保留。不能将 Agent 自身超时、循环或违规随意归类为无效；责任不清时人工复核。"
+                },
+                {
+                  "id": "outcomes",
+                  "title": "业务与政策检查",
+                  "summary": "核验业务目标、必要信息，以及动作时的授权和确认。",
+                  "input": "评估器专用的验收标准、适用政策、完整工具与消息轨迹，以及业务初始和最终状态。",
+                  "output": "业务结果、必要沟通与动作合规的独立检查项，附证据、通过／失败／未知与严重程度。",
+                  "rule": "能程序验证的事实优先用断言。接受等效有效路径；最终状态正确不代表确认时序合规。无权限时正确拒绝或转人工可按场景判通过。"
+                },
+                {
+                  "id": "rubric",
+                  "title": "沟通质量评估",
+                  "summary": "按明确细则逐维度评分，标明证据与不确定性。",
+                  "input": "版本化评分细则、对话及相关执行证据，以及与任务匹配的参考事实和校准示例。",
+                  "output": "各项评分、支撑证据，以及存在不确定性或分歧的判定。",
+                  "rule": "裁判固定模型、提示词与细则版本；检查位置、长度和风格偏好。使用相关完整上下文，允许未知；质量分不能抵消任务或政策失败。"
+                },
+                {
+                  "id": "review",
+                  "title": "人工复核与校准",
+                  "summary": "复核严重失败和分歧，并抽查通过与无效试验。",
+                  "input": "模拟有效性、任务结果和评分细则的检查结果，以及底层轨迹和客户场景。",
+                  "output": "人工审核标签、待确定案例，以及有依据的场景或评估器修订。",
+                  "rule": "校准样本与独立验证样本分离；记录人工分歧、修改理由和适用任务／语言范围。修改评估标准不能替代修复真正的 Agent 问题。"
+                },
+                {
+                  "id": "report",
+                  "title": "版本比较与发布决策",
+                  "summary": "报告任务通过、违规、重复可靠性、质量和成本。",
+                  "input": "逐次试验结果、有效性标签、人工复核，以及所比较版本的固定运行配置。",
+                  "output": "按任务分组的基线／候选结果、全部尝试与各类分母、重复可靠性、误判、质量、耗时与费用，以及待复核事项。",
+                  "rule": "比较条件和发布门槛预先确定。评分标准变化需重评；部分样本不能伪装成完整基准结果，模拟提升不能直接当作线上因果改善。"
+                },
+                {
+                  "id": "regression",
+                  "title": "失败归因与回归",
+                  "summary": "复现问题、修复负责的组件，再跑原案例和固定测试集。",
+                  "input": "经过复核的失败案例，及其准确的任务、Agent、工具、模拟器和评估器版本。",
+                  "output": "可复现的失败案例、有针对性的修复和回归证据；返回运行器开展下一轮比较。",
+                  "rule": "分别归因 Agent、场景、模拟器、环境与评估器。校准与独立评测隔离；同一问题链接全局 Bad cases 记录，修复后保留回归与上线验证证据。"
+                },
+                {
+                  "id": "online",
+                  "title": "线上观察与反馈",
+                  "summary": "关联真实业务结果、采样评分、用户反馈与版本。",
+                  "input": "真实会话与执行记录、业务结果和延迟反馈；明确的采样规则、任务类型、版本与用户分组。",
+                  "output": "质量趋势、采样覆盖、待复核案例和发布后的实际结果；重要案例进入场景库。",
+                  "rule": "区分单次调用与完整会话、自动分数与业务结果、模拟与真实流量。线上评估可异步；效果趋势不能代替随机 A/B 因果证据。"
+                }
+              ],
+              "routing": [
+                {
+                  "label": "客户目标与已知事实",
+                  "target": "simulator",
+                  "detail": "仅提供客户可见的设定、对话与客户侧工具结果。"
+                },
+                {
+                  "label": "业务政策、知识与工具",
+                  "target": "agent",
+                  "detail": "使用获准访问的信息；不包含隐藏标准或参考解。"
+                },
+                {
+                  "label": "业务初始状态",
+                  "target": "sandbox",
+                  "detail": "每次试验独立重置，避免上次写入影响下次。"
+                },
+                {
+                  "label": "隐藏验收标准与评分细则",
+                  "target": "outcomes",
+                  "detail": "仅供业务／政策检查与质量评估器使用。"
+                }
+              ],
+              "example": {
+                "title": "示例场景：客户申请退回一副耳机",
+                "setup": "这是人为构造的示例，尚未执行测试：订单 123 在五天前送达，客户因改变主意申请退货；商品状态和其他退货政策条件均已明确满足。",
+                "expected": "Agent 核验身份、取得必要确认并创建正确的退货记录，同时准确说明后续步骤。如果政策要求收到退货后才退款，此时不应立即退款。",
+                "boundary": "以上均为说明架构的人为示例，尚未执行。客户可走不同的有效对话路径；拒绝、转人工是否成功，由每个场景的目标与政策事先确定。",
+                "cases": [
+                  {
+                    "title": "核验身份、取得确认，创建正确退货记录并说明后续步骤。",
+                    "decision": "可判任务通过；沟通质量另评。",
+                    "reason": "业务目标、必要信息与动作合规均有证据。"
+                  },
+                  {
+                    "title": "回复“退货已办理”，但业务系统中没有退货记录。",
+                    "decision": "业务失败。",
+                    "reason": "流畅的回答不能证明动作已完成。"
+                  },
+                  {
+                    "title": "退货记录正确，但未取得必要确认就执行；或违规提前退款。",
+                    "decision": "政策失败。",
+                    "reason": "正确的最终状态不能抵消未经授权的操作。"
+                  },
+                  {
+                    "title": "模拟器编造订单事实，或测试环境初始化出错。",
+                    "decision": "试验无效或待复核。",
+                    "reason": "保留证据和数量，先确定责任，不把这次试验直接算成 Agent 成功。"
+                  }
+                ]
+              },
+              "sources": [
+                {
+                  "id": "tau-bench",
+                  "kind": "原始论文",
+                  "title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+                  "shortTitle": "τ-bench / 结果与重复可靠性",
+                  "url": "https://arxiv.org/abs/2406.12045v1",
+                  "authors": "Yao, Shunyu; Shinn, Noah; Razavi, Pedram et al.",
+                  "date": "2024-06-17",
+                  "version": "v1",
+                  "supports": "§3（pp. 3–5）区分客户设定、工具和隐藏目标，提出 pass^k；明确指出最终结果正确仍可能缺少客户确认。用于业务断言、信息隔离与重复可靠性。",
+                  "limitations": "核对 §3–6 相关内容；零售与航空模拟不能代表所有客服业务，也不能证明线上效果。对话无需逐字一致；本项目动作合规门槛属于进一步的工程设计。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/sierra-research/tau-bench"
+                },
+                {
+                  "id": "tau2-bench",
+                  "kind": "原始论文",
+                  "title": "τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment",
+                  "shortTitle": "τ²-Bench / 模拟有效性",
+                  "url": "https://arxiv.org/abs/2506.07982v1",
+                  "authors": "Barres, Victor; Dong, Honghua; Ray, Soham et al.",
+                  "date": "2025-06-09",
+                  "version": "v1",
+                  "supports": "§3、§4.3 与 Appendix B 将状态断言、任务可行性和模拟器审核连接起来；客户需要执行操作时，可加入客户侧工具。",
+                  "limitations": "核对 §3、§4.3 与 Appendix B；论文仍发现部分模拟器关键错误，也未完整建模专家与新手差异，不能认为模拟用户代表所有真实客户。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/sierra-research/tau2-bench"
+                },
+                {
+                  "id": "agentbench",
+                  "kind": "原始论文",
+                  "title": "AgentBench: Evaluating LLMs as Agents",
+                  "shortTitle": "AgentBench / 交互与失败类型",
+                  "url": "https://arxiv.org/abs/2308.03688v3",
+                  "authors": "Liu, Xiao; Yu, Hao; Zhang, Hanchen et al.",
+                  "date": "2025-10-04",
+                  "version": "v3",
+                  "supports": "§2、§3、§4.3 区分交互状态、任务结果与终止原因。用于任务分组、失败分类和执行记录。",
+                  "limitations": "选读相关章节；这是多环境基准，不能直接套用其任务权重或推断客服上线质量。本轮未运行代码。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/THUDM/AgentBench"
+                },
+                {
+                  "id": "mtbench",
+                  "kind": "原始论文",
+                  "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+                  "shortTitle": "MT-Bench / 裁判偏差",
+                  "url": "https://arxiv.org/abs/2306.05685v4",
+                  "authors": "Zheng, Lianmin; Chiang, Wei-Lin; Sheng, Ying et al.",
+                  "date": "2023-12-24",
+                  "version": "v4",
+                  "supports": "§3.3–3.5 分析位置、冗长与上下文问题；成对顺序对照与完整对话上下文为裁判校准提供依据。",
+                  "limitations": "核对 §3.3–3.5、§4.1–4.2。人类偏好一致性取决于样本与平局处理，不能把论文的高一致率当作通用业务准确率。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/lm-sys/FastChat/tree/main/fastchat/llm_judge",
+                  "citations": {
+                    "count": 1856,
+                    "url": "https://openalex.org/W7133239970",
+                    "checkedAt": "2026-10-30",
+                    "recordDoi": "https://doi.org/10.52202/075280-2020",
+                    "updatedAt": "2026-10-29T09:56:32.521200"
+                  }
+                },
+                {
+                  "id": "geval",
+                  "kind": "原始论文",
+                  "title": "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment",
+                  "shortTitle": "G-Eval / 评分细则",
+                  "url": "https://arxiv.org/abs/2303.16634v3",
+                  "authors": "Liu, Yang; Iter, Dan; Xu, Yichong et al.",
+                  "date": "2023-05-23",
+                  "version": "v3",
+                  "supports": "§2 以任务定义、评价维度、评价步骤和结构化评分组织模型评审。用于明确各维度判定标准。",
+                  "limitations": "核对 §2–4 相关内容；摘要与对话生成上的相关性不等于客服工具任务成功。论文也观察到对模型生成文本的潜在偏好。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/nlpyang/geval",
+                  "citations": {
+                    "count": 943,
+                    "url": "https://openalex.org/W4389519254",
+                    "checkedAt": "2026-10-30",
+                    "recordDoi": "https://doi.org/10.18653/v1/2023.emnlp-main.153",
+                    "updatedAt": "2026-10-29T09:56:32.521200"
+                  }
+                },
+                {
+                  "id": "anthropic",
+                  "kind": "官方工程指南",
+                  "title": "Demystifying evals for AI agents",
+                  "shortTitle": "Anthropic / Agent 评估实践",
+                  "url": "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+                  "authors": "Anthropic",
+                  "date": "2026-01-09",
+                  "version": "在线文档，按核对日期记录",
+                  "supports": "区分 task、trial、trace、outcome、grader；隔离试验，组合程序、模型和人工评估，并将离线测试、线上监测与 A/B 分开。",
+                  "limitations": "阅读术语、会话 Agent、非确定性、实施步骤和评估组合相关章节。属于官方工程经验，不是对本架构的实验验证。",
+                  "checkedAt": "2026-10-30"
+                },
+                {
+                  "id": "langfuse",
+                  "kind": "官方工程指南",
+                  "title": "Langfuse · Evaluation Core Concepts",
+                  "shortTitle": "Langfuse / 质量闭环",
+                  "url": "https://langfuse.com/docs/evaluation/core-concepts",
+                  "authors": "Langfuse",
+                  "date": "2026-10-30 核对",
+                  "version": "在线文档，按核对日期记录",
+                  "supports": "Evaluation Loop、Scores、Evaluators and rules：把评分关联到执行记录，区分评分方法与采样规则，把复核后的线上问题补入评测集。",
+                  "limitations": "核对核心概念页面。平台能保存分数不代表该分数准确；固定数据集回归也可在上线后继续运行。",
+                  "checkedAt": "2026-10-30"
+                },
+                {
+                  "id": "langsmith",
+                  "kind": "官方工程指南",
+                  "title": "LangSmith · Set up LLM-as-a-judge online evaluators",
+                  "shortTitle": "LangSmith / 线上采样",
+                  "url": "https://docs.langchain.com/langsmith/online-evaluations-llm-as-judge",
+                  "authors": "LangChain",
+                  "date": "2026-10-30 核对",
+                  "version": "在线文档，按核对日期记录",
+                  "supports": "核对按运行或会话评估、筛选规则、采样与后台回填。用于标注线上评分覆盖范围与反馈延迟。",
+                  "limitations": "核对相关文档，未接入 SDK。文档中的示例采样率不是通用标准；自动评分趋势不构成发布的因果证据。",
+                  "checkedAt": "2026-10-30"
+                },
+                {
+                  "id": "tau2-code",
+                  "kind": "固定版本实现",
+                  "title": "τ-bench v2.0.0 · Task Schema and Evaluation",
+                  "shortTitle": "τ-bench v2 / 固定版本实现",
+                  "url": "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
+                  "authors": "Sierra Research",
+                  "date": "2026-10-30 核对",
+                  "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+                  "supports": "核对 evaluation、domains、orchestrator、user_simulator 与 judge-validation：参考动作可以只是有效路径之一；检查项是否影响最终奖励由配置决定；评估器需要独立验证。",
+                  "limitations": "固定 v2.0.0 的文档与关键代码，未安装或运行。默认数据库哈希判定与本项目定向业务断言不同；部分自然语言检查与裁判默认项仍有实验性或未验证范围。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/sierra-research/tau2-bench"
+                },
+                {
+                  "id": "tau2-release",
+                  "kind": "固定版本实现",
+                  "title": "τ-bench 2.0.0 — Multilingual and Voice",
+                  "shortTitle": "τ-bench v2 / 版本可比性",
+                  "url": "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0",
+                  "authors": "Sierra Research",
+                  "date": "2026-10-20",
+                  "version": "989d3285ae669e49503324bdb9981bf14fccedeb",
+                  "supports": "发布说明明确 v2.0 与 1.x 分数不可比较；运行指南分别记录失败、未评分、缺失和基础设施错误。用于冻结完整评估配置与说明分母。",
+                  "limitations": "核对发布说明与运行指南的 Scoring、Pass^3 等章节。新实现不等于原始论文；语音／多语言功能属于可选扩展，不据此扩大本项目当前范围。",
+                  "checkedAt": "2026-10-30",
+                  "repository": "https://github.com/sierra-research/tau2-bench"
+                }
+              ],
+              "evidenceNote": "选取与客服任务直接相关的 τ 系列与 AgentBench，以及引用较多的 MT-Bench、G-Eval 作为方法依据；官方指南与固定版本实现用于核对工程细节。下方逐条说明支持的设计和局限。引用量来自 OpenAlex 的指定条目快照，不能当作质量排名。本文只完成资料选读与架构设计，没有运行论文实验或验证评估准确性。",
+              "flowCaption": "系统总览：从可信场景到线上回归",
+              "flow": [
+                {
+                  "title": "准备可信场景",
+                  "summary": "把真实问题整理成可复现的测试，先写清成功标准。",
+                  "components": [
+                    "recordings",
+                    "conversion",
+                    "scenarios"
+                  ]
+                },
+                {
+                  "title": "运行隔离试验",
+                  "summary": "客户与 Agent 动态对话；每次从干净的业务状态开始。",
+                  "components": [
+                    "runner",
+                    "simulator",
+                    "agent",
+                    "sandbox",
+                    "evidence"
+                  ]
+                },
+                {
+                  "title": "分层判定",
+                  "summary": "先检查试验有效性，再核验结果、合规与沟通质量。",
+                  "components": [
+                    "validity",
+                    "outcomes",
+                    "rubric",
+                    "review"
+                  ]
+                },
+                {
+                  "title": "比较与决策",
+                  "summary": "在相同评估条件下比较版本，检查收益、风险和不确定性。",
+                  "components": [
+                    "report"
+                  ]
+                },
+                {
+                  "title": "线上验证与回归",
+                  "summary": "观察实际任务结果，将复核后的失败加入固定回归集。",
+                  "components": [
+                    "online",
+                    "regression"
+                  ]
+                }
+              ],
+              "feedback": "线上发现问题 → 人工复核与归因 → 修复负责的组件 → 重跑原案例与固定回归集。",
+              "designBasis": "图中的五步是本项目的工程组织方式。论文提供评估方法，官方指南提供实践经验，不能据此声称整套系统已验证有效。",
+              "flowSources": [
+                "anthropic",
+                "tau-bench",
+                "langfuse"
+              ],
+              "terms": [
+                {
+                  "title": "场景（Task）",
+                  "detail": "一个客户目标，加上初始业务状态、适用政策和明确的成功标准。"
+                },
+                {
+                  "title": "试验（Trial）",
+                  "detail": "在某个场景下完整跑一次 Agent。同一场景需要多次试验，观察是否稳定。"
+                },
+                {
+                  "title": "执行轨迹（Trace）",
+                  "detail": "这次试验实际发生的消息、工具调用、状态变化与终止原因。"
+                },
+                {
+                  "title": "评估器（Grader）",
+                  "detail": "根据证据作出一项判定的规则、程序、模型或人工评审；一项任务可以有多个评估器。"
+                }
+              ],
+              "runtime": {
+                "summary": "运行器负责初始化和路由；Agent 自己决定下一步。历史对话用于构造场景，测试时允许出现不同但有效的对话路径。",
+                "control": "重置会话与业务状态，固定版本，限制轮次、时长和费用。",
+                "evidence": "关联场景编号与试验编号，保存消息、工具动作、初末状态、错误、耗时和费用。",
+                "boundary": "需要客户执行设备操作时，可按 τ²-Bench 的思路加入客户侧工具与状态；一般退货场景不必增加这层复杂度。模拟器不读取 Agent 的私有工具结果，也不决定是否通过。",
+                "sources": [
+                  "tau-bench",
+                  "tau2-bench",
+                  "tau2-code"
+                ]
+              },
+              "checkSummary": "各项结果分别保存。先区分试验有效性与评分状态：有效试验也可能因结果证据不足而待判定／未评分。Agent 自身超时、循环或错误操作仍是失败，不能当作测试故障排除。",
+              "checks": [
+                {
+                  "title": "1. 试验是否有效",
+                  "evidence": "场景事实、初始化检查、模拟器行为和完整执行记录。",
+                  "decision": "标记有效、无效或无法判定，并保留理由。证据不足时不强行判成功，也不直接归咎 Agent。"
+                },
+                {
+                  "title": "2. 业务是否完成",
+                  "evidence": "目标业务状态与必须告知客户的信息；优先使用程序可核验的断言。",
+                  "decision": "确认目标是否真正达成。正确拒绝或转人工，可以是场景事先定义的成功结果。"
+                },
+                {
+                  "title": "3. 动作是否合规",
+                  "evidence": "动作发生时的身份权限、必要确认、政策版本及调用顺序。",
+                  "decision": "检查先确认再执行、禁止操作等硬条件。最终状态正确，也可能因未经授权的操作而失败。"
+                },
+                {
+                  "title": "4. 沟通是否好用",
+                  "evidence": "相关完整对话、工具和业务证据；明确的评分细则与人工审核示例。",
+                  "decision": "模型裁判按准确性、清晰度和有用性分别评分，指出证据；分歧与不确定项交给人工复核。"
+                }
+              ],
+              "checkBoundary": "综合通过必须满足预先定义的任务与政策硬条件。较高的语气或流畅度分数不能抵消关键失败；模型判定也需要在独立人工标注样本上检验。",
+              "checkSources": [
+                "tau-bench",
+                "tau2-bench",
+                "mtbench",
+                "geval"
+              ],
+              "metrics": [
+                {
+                  "title": "任务通过率",
+                  "meaning": "满足业务目标和政策硬条件的有效试验数 ÷ 有效试验数。",
+                  "report": "同时给出全部尝试、有效、无效和有效但待判定／未评分的数量；按任务类型报告，说明未决项如何进入分母，避免平均值掩盖薄弱场景。"
+                },
+                {
+                  "title": "严重违规率",
+                  "meaning": "发生未经授权退款等预先定义严重违规的有效试验比例。",
+                  "report": "违规类型、证据和人工复核结果；不能只报告平均质量分。"
+                },
+                {
+                  "title": "重复可靠性 pass^k",
+                  "meaning": "固定条件下，同一场景独立重复 k 次全部成功的可靠性；pass@k 则是至少一次成功。",
+                  "report": "每场景计划 n ≥ k 次试验，逐场景计算后汇总，注明 n、k 与估计方法。不能将总体通过率直接取 k 次方；缺失或无效试验未补齐时，不报告该场景的完整重复可靠性。"
+                },
+                {
+                  "title": "评估器误判",
+                  "meaning": "用独立人工标注样本检查错判，重点看严重失败被误判为通过。",
+                  "report": "人工标准、任务与语言范围、样本量、分歧和未知比例；一致性高不等于业务一定成功。"
+                },
+                {
+                  "title": "沟通质量",
+                  "meaning": "按同一版细则分别比较准确性、清晰度、有用性等维度。",
+                  "report": "分数分布与典型证据。成对比较时控制答案顺序并复核分歧；不把模型偏好当作业务事实。"
+                },
+                {
+                  "title": "耗时与费用",
+                  "meaning": "分别记录用户等待时间、每次 Agent 执行成本和整次评估成本。",
+                  "report": "样本量、延迟分位数、模型用量，以及模拟器和评估器费用；与质量结果关联，但不混成单一总分。"
+                }
+              ],
+              "metricBoundary": "重复可靠性与误判统计都依赖明确的抽样和计算约定。发布判断应同时看样本量与不确定性；当前没有实际数据或经过验证的数值门槛。",
+              "metricSources": [
+                "tau-bench",
+                "agentbench",
+                "mtbench",
+                "anthropic"
+              ],
+              "release": {
+                "rules": [
+                  "先冻结比较条件：场景与划分、业务初始状态、政策与知识、工具、客户模拟器、评分细则和裁判版本。对基线与候选版本使用同一评估设置，重复试验并报告任务分组结果。",
+                  "开发集用于修复，校准集用于改进评估器，独立评测集用于比较。由同一原始案例产生的变体放在同一划分；独立样本用于开发后，记录用途变化并补充新的保留样本。",
+                  "按业务风险预先约定通过条件、严重违规处理与复核要求。模型或评分规则变化时，重新评估可比较样本，不能直接拼接不同标准下的分数。",
+                  "离线通过后仍要检查真实业务结果、用户反馈、采样覆盖与延迟反馈。线上评分变化用于发现问题；要判断发布是否造成改善，另行设计合适的随机 A/B 实验。"
+                ],
+                "versionNote": "版本实例：τ-bench v2.0.0 明确说明评分与 1.x 不可直接比较。新版本更改了沟通判定、自然语言断言等环节，因此比较时必须固定整个评估配置，而不只是 Agent 模型。",
+                "sources": [
+                  "tau2-release",
+                  "langsmith",
+                  "anthropic"
+                ]
+              },
+              "revisions": [
+                "v0.1 · 2026-10-29：建立历史对话、客户模拟器、待测 Agent、业务环境与失败回归的基础方案。原始架构与来源核对记录完整保留。",
+                "v0.2 · 2026-10-30：依据原始论文与官方指南补充分层判定、重复可靠性、评估器校准、版本可比性及线上闭环；改为五步总览、单次试验图、判定表和退货示例。仍为待实现方案。"
+              ],
+              "inlineCitations": {
+                "runtime": [
+                  "tau2-bench"
+                ],
+                "checks": [
+                  "mtbench"
+                ],
+                "metrics": [
+                  "tau-bench"
+                ],
+                "release": [
+                  "tau2-release"
+                ]
+              }
+            }
+          }
+        ],
+        "research": [
+          {
+            "date": "2026-10-30",
+            "title": "客服 Agent 评估架构 v0.3 资料复核",
+            "paperVersions": [
+              {
+                "id": "2406.12045",
+                "version": "v1",
+                "url": "https://arxiv.org/abs/2406.12045v1",
+                "readScope": "Abstract; §3 task instances/reward/pass^k; §4 construction; §5.2 failure analysis; §6 discussion."
+              },
+              {
+                "id": "2506.07982",
+                "version": "v1",
+                "url": "https://arxiv.org/abs/2506.07982v1",
+                "readScope": "Abstract/introduction; §3.1–3.3; §4.2–4.3 and Table 2; §5; Appendix B."
+              },
+              {
+                "id": "2306.05685",
+                "version": "v4",
+                "url": "https://arxiv.org/abs/2306.05685v4",
+                "readScope": "Abstract; §3.3–3.5; §4.1–4.2 and Tables 5–6."
+              },
+              {
+                "id": "2303.16634",
+                "version": "v3",
+                "url": "https://arxiv.org/abs/2303.16634v3",
+                "readScope": "Abstract; §2 method; §3.1 and Tables 1–2; §4 analysis and Figure 2."
+              },
+              {
+                "id": "2308.03688",
+                "version": "v3",
+                "url": "https://arxiv.org/abs/2308.03688v3",
+                "readScope": "Abstract; §2; §3 overview; §4.1 aggregate scoring; §4.3 outcome analysis."
+              }
+            ],
+            "implementation": {
+              "repository": "https://github.com/sierra-research/tau2-bench",
+              "version": "v2.0.0",
+              "commit": "989d3285ae669e49503324bdb9981bf14fccedeb"
+            },
+            "outcome": "形成双控制运行图、任务可行性门、模拟器逐轮审计、动作／历史断言和配对诊断的设计修订；未运行实验。"
+          }
+        ]
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "08",
+      "dir": "08-security-and-permissions",
+      "title": "安全与权限控制",
+      "english": "Security & Permissions",
+      "summary": "用信任边界、最小权限与授权验证约束 Agent 的真实行动。",
+      "keywords": "prompt injection OWASP AgentDojo security permissions 提示注入 越权 安全",
+      "prerequisites": [
+        "02",
+        "05"
+      ],
+      "units": [
+        {
+          "title": "威胁与信任边界",
+          "scope": "用户、系统、检索资料、工具结果和外部指令。",
+          "evidence": "画出数据与指令边界，列出可能的越界路径。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "08.1",
+          "resources": [
+            "https://arxiv.org/abs/2302.12173",
+            "https://github.com/ethz-spylab/agentdojo",
+            "https://genai.owasp.org/llm-top-10/"
+          ],
+          "practiceNote": "区分外部数据和可执行指令，在程序侧保护权限边界。",
+          "exercise": {
+            "title": "本地 Agent 信任边界图",
+            "goal": "画出用户、检索文档、工具结果和执行器之间的数据与指令流。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "08.1-P1"
+          }
+        },
+        {
+          "title": "提示注入",
+          "scope": "直接与间接注入、恶意文档和工具返回内容。",
+          "evidence": "在授权本地环境中复现一个受控注入案例。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "08.2",
+          "resources": [
+            "https://arxiv.org/abs/2302.12173",
+            "https://arxiv.org/abs/2406.13352",
+            "https://github.com/ethz-spylab/agentdojo",
+            "https://genai.owasp.org/llm-top-10/"
+          ],
+          "practiceNote": "在授权的本地环境测试外部恶意内容，保留正常任务对照。",
+          "exercise": {
+            "title": "受控文档注入测试",
+            "goal": "在无外部副作用的模拟资料中加入指令，检查是否越过信任边界。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "08.2-P1"
+          }
+        },
+        {
+          "title": "最小权限与身份",
+          "scope": "凭证范围、资源隔离、身份传递和授权判断。",
+          "evidence": "分别验证授权和越权请求，权限由程序检查。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "08.3",
+          "resources": [
+            "https://github.com/ethz-spylab/agentdojo",
+            "https://genai.owasp.org/llm-top-10/"
+          ],
+          "practiceNote": "给身份和工具设置最小资源范围，授权判断不依赖模型。",
+          "exercise": {
+            "title": "工具权限矩阵测试",
+            "goal": "分别测试只读、模拟写入和未授权访问，保存允许与拒绝证据。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "08.3-P1"
+          }
+        },
+        {
+          "title": "高风险动作与审批",
+          "scope": "写入、删除、外发、支付等动作的审批与恢复。",
+          "evidence": "未经批准的测试写操作不能产生实际效果。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "08.4",
+          "resources": [
+            "https://github.com/ethz-spylab/agentdojo",
+            "https://genai.owasp.org/llm-top-10/"
+          ],
+          "practiceNote": "把审批绑定到具体动作和参数，变化后重新检查。",
+          "exercise": {
+            "title": "模拟写操作审批闸门",
+            "goal": "测试未批准、批准和批准后参数变化三种路径。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "08.4-P1"
+          }
+        },
+        {
+          "title": "数据保护与审计",
+          "scope": "敏感信息脱敏、日志访问、保留期限和审计。",
+          "evidence": "检查执行记录不会泄露测试凭证或个人敏感信息。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "08.5",
+          "resources": [
+            "https://github.com/ethz-spylab/agentdojo",
+            "https://genai.owasp.org/llm-top-10/"
+          ],
+          "practiceNote": "使用测试凭证验证脱敏、日志访问和保留边界。",
+          "exercise": {
+            "title": "日志敏感字段检查",
+            "goal": "将假凭证和虚构个人字段放入测试输入，检查可见日志内容。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "08.5-P1"
+          }
+        },
+        {
+          "title": "防御评估",
+          "scope": "攻击成功率、正常任务完成率和误拒。",
+          "evidence": "同时报告防御效果与正常任务能力损失。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "08.6",
+          "resources": [
+            "https://arxiv.org/abs/2406.13352",
+            "https://github.com/ethz-spylab/agentdojo",
+            "https://genai.owasp.org/llm-top-10/"
+          ],
+          "practiceNote": "同时报告攻击成功、正常任务成功与误拒情况。",
+          "exercise": {
+            "title": "防御效果与能力损失对照",
+            "goal": "在相同授权测试任务上对比有无防护，复核误拒和漏防。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "08.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2302.12173",
+          "title": "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection",
+          "authors": [
+            "Greshake, Kai",
+            "Abdelnabi, Sahar",
+            "Mishra, Shailesh",
+            "Endres, Christoph",
+            "Holz, Thorsten",
+            "Fritz, Mario"
+          ],
+          "date": "2023-02-23",
+          "url": "https://arxiv.org/abs/2302.12173",
+          "question": "外部内容如何转化为越权指令？原始应用中有哪些边界问题？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Indirect Prompt Injection"
+        },
+        {
+          "kind": "paper",
+          "id": "2406.13352",
+          "title": "AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents",
+          "authors": [
+            "Debenedetti, Edoardo",
+            "Zhang, Jie",
+            "Balunović, Mislav",
+            "Beurer-Kellner, Luca",
+            "Fischer, Marc",
+            "Tramèr, Florian"
+          ],
+          "date": "2024-06-19",
+          "url": "https://arxiv.org/abs/2406.13352",
+          "question": "如何同时评估注入攻击、防御效果与正常任务能力？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "AgentDojo"
+        },
+        {
+          "kind": "official",
+          "title": "OWASP · Top 10 for LLM Applications",
+          "url": "https://genai.owasp.org/llm-top-10/",
+          "question": "风险清单如何转化为本项目的具体权限与测试？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "ethz-spylab / agentdojo",
+          "url": "https://github.com/ethz-spylab/agentdojo",
+          "question": "任务、攻击和防御如何构造与衡量？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        }
+      ],
+      "project": {
+        "title": "本地工具 Agent 的权限与注入测试",
+        "goal": "在隔离测试数据上验证外部内容不能改变权限边界。",
+        "status": "planned",
+        "steps": [
+          "定义测试资源、允许动作和禁止动作。",
+          "构造正常请求与受控恶意工具返回。",
+          "记录攻击结果、正常任务成功率与误拒。"
+        ],
+        "acceptance": [
+          "所有操作只针对授权本地测试资源。",
+          "权限判断独立于模型自然语言承诺。",
+          "敏感测试值不会被写入公开记录。",
+          "报告安全收益及可用性代价。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "08-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "09",
+      "dir": "09-data-prompts-and-model-adaptation",
+      "title": "数据、提示和模型适配",
+      "english": "Data & Model Adaptation",
+      "summary": "通过可重复比较选择提示、模型路由和训练策略，避免凭印象优化。",
+      "keywords": "DSPy prompt optimization fine-tuning routing data Toolformer 提示 微调",
+      "prerequisites": [
+        "02",
+        "07"
+      ],
+      "units": [
+        {
+          "title": "任务数据与标注",
+          "scope": "任务覆盖、质量、歧义和执行轨迹构造。",
+          "evidence": "定义标注规范与代表性样例。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "09.1",
+          "resources": [
+            "https://arxiv.org/abs/2310.03714",
+            "https://arxiv.org/abs/2302.04761",
+            "https://github.com/stanfordnlp/dspy",
+            "https://dspy.ai/learn/optimization/optimizers/"
+          ],
+          "practiceNote": "明确任务覆盖和标注歧义，保留数据来源与划分。",
+          "exercise": {
+            "title": "工具任务数据与标注规范",
+            "goal": "编写小型任务集、标注规则和有歧义样本的复核记录。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "09.1-P1"
+          }
+        },
+        {
+          "title": "提示与结构化约束",
+          "scope": "任务说明、示例、输出约束与消融实验。",
+          "evidence": "比较提示变体，避免只展示挑选出的成功样例。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "09.2",
+          "resources": [
+            "https://arxiv.org/abs/2310.03714",
+            "https://github.com/stanfordnlp/dspy",
+            "https://dspy.ai/learn/optimization/optimizers/"
+          ],
+          "practiceNote": "固定任务和评分方式，一次改变一个提示因素。",
+          "exercise": {
+            "title": "提示约束消融实验",
+            "goal": "比较无示例、有示例与结构化约束三种配置。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "09.2-P1"
+          }
+        },
+        {
+          "title": "模型选择与路由",
+          "scope": "能力、成本、延迟、工具使用与失败回退。",
+          "evidence": "以相同任务集验证路由的质量和预算。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "09.3",
+          "resources": [
+            "https://github.com/stanfordnlp/dspy",
+            "https://dspy.ai/learn/optimization/optimizers/"
+          ],
+          "practiceNote": "以任务结果验证路由与回退的质量、成本和延迟。",
+          "exercise": {
+            "title": "双模型路由与回退",
+            "goal": "为简单和复杂任务配置候选模型，比较固定模型与路由。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "09.3-P1"
+          }
+        },
+        {
+          "title": "自动提示优化",
+          "scope": "优化目标、搜索空间和验证集过拟合。",
+          "evidence": "区分训练、开发与最终评测集。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "09.4",
+          "resources": [
+            "https://arxiv.org/abs/2310.03714",
+            "https://github.com/stanfordnlp/dspy",
+            "https://dspy.ai/learn/optimization/optimizers/"
+          ],
+          "practiceNote": "分开训练、开发和最终评测，防止优化目标泄漏。",
+          "exercise": {
+            "title": "DSPy 小型提示优化",
+            "goal": "用开发集选择提示，再在保留的任务集上报告收益。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "09.4-P1"
+          }
+        },
+        {
+          "title": "微调与轨迹训练",
+          "scope": "何时微调、监督信号、工具调用数据与数据授权。",
+          "evidence": "提出可验证的微调假设，先比较较低成本方案。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "09.5",
+          "resources": [
+            "https://arxiv.org/abs/2302.04761",
+            "https://github.com/stanfordnlp/dspy",
+            "https://dspy.ai/learn/optimization/optimizers/"
+          ],
+          "practiceNote": "先比较提示和检索基线；明确工具轨迹的授权与训练信号。",
+          "exercise": {
+            "title": "轨迹数据审查与适配方案",
+            "goal": "检查一组授权的模拟轨迹，设计微调与低成本方案的对照。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "09.5-P1"
+          }
+        },
+        {
+          "title": "适配评估与版本管理",
+          "scope": "数据、提示、模型、评分器和实验版本。",
+          "evidence": "保留完整配置并在独立任务集上复核收益。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "09.6",
+          "resources": [
+            "https://arxiv.org/abs/2310.03714",
+            "https://github.com/stanfordnlp/dspy",
+            "https://dspy.ai/learn/optimization/optimizers/"
+          ],
+          "practiceNote": "同时固定数据、提示、模型和评分器版本，保存完整配置。",
+          "exercise": {
+            "title": "配置版本与回归报告",
+            "goal": "给每次适配记录配置摘要，在独立任务集上比较质量与预算。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "09.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2310.03714",
+          "title": "DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines",
+          "authors": [
+            "Khattab, Omar",
+            "Singhvi, Arnav",
+            "Maheshwari, Paridhi",
+            "Zhang, Zhiyuan",
+            "Santhanam, Keshav",
+            "Vardhamanan, Sri",
+            "Haq, Saiful",
+            "Sharma, Ashutosh",
+            "Joshi, Thomas T.",
+            "Moazam, Hanna",
+            "Miller, Heather",
+            "Zaharia, Matei",
+            "Potts, Christopher"
+          ],
+          "date": "2023-10-05",
+          "url": "https://arxiv.org/abs/2310.03714",
+          "question": "如何从手写提示转向可优化的模型调用管线？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "DSPy"
+        },
+        {
+          "kind": "paper",
+          "id": "2302.04761",
+          "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+          "authors": [
+            "Schick, Timo",
+            "Dwivedi-Yu, Jane",
+            "Dessì, Roberto",
+            "Raileanu, Roberta",
+            "Lomeli, Maria",
+            "Zettlemoyer, Luke",
+            "Cancedda, Nicola",
+            "Scialom, Thomas"
+          ],
+          "date": "2023-02-09",
+          "url": "https://arxiv.org/abs/2302.04761",
+          "question": "工具调用训练数据如何筛选，哪些条件限制迁移？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "Toolformer"
+        },
+        {
+          "kind": "official",
+          "title": "DSPy · Optimizers",
+          "url": "https://dspy.ai/learn/optimization/optimizers/",
+          "question": "优化器依赖哪些数据与度量，如何避免验证集泄漏？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "stanfordnlp / dspy",
+          "url": "https://github.com/stanfordnlp/dspy",
+          "question": "模块、优化器和评估流程如何组织？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        }
+      ],
+      "project": {
+        "title": "提示与模型策略实验台",
+        "goal": "在工具任务上比较手写提示、自动优化和简单模型路由。",
+        "status": "planned",
+        "steps": [
+          "划分训练、开发与独立评测任务。",
+          "固定评分标准，记录提示与模型版本。",
+          "比较质量、成本、延迟和常见错误类型。"
+        ],
+        "acceptance": [
+          "最终评测数据未用于提示搜索。",
+          "比较使用一致任务与评分规则。",
+          "保留实验参数、数据版本和完整结果。",
+          "没有实际训练时不宣称完成微调。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "09-P1"
+      },
+      "sharedSourceUrls": []
+    },
+    {
+      "id": "10",
+      "dir": "10-production-and-reliability",
+      "title": "生产系统与可靠性工程",
+      "english": "Production & Reliability",
+      "summary": "让 Agent 服务在并发、故障和预算限制下可靠运行，与效果评估协同。",
+      "keywords": "Temporal reliability durability concurrency idempotency SLO cost 稳定性 生产",
+      "prerequisites": [
+        "01",
+        "02",
+        "07",
+        "08"
+      ],
+      "units": [
+        {
+          "title": "服务边界与持久执行",
+          "scope": "API、队列、工作进程、任务生命周期和状态存储。",
+          "evidence": "说明请求结束后长任务如何继续和恢复。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "10.1",
+          "resources": [
+            "https://github.com/temporalio/samples-python",
+            "https://docs.temporal.io/workflow-execution"
+          ],
+          "practiceNote": "把请求接收与长任务执行分开，持久保存任务状态。",
+          "exercise": {
+            "title": "持久任务与重启恢复",
+            "goal": "让一个后台任务跨进程重启继续执行，并核对生命周期。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "10.1-P1"
+          }
+        },
+        {
+          "title": "并发与资源治理",
+          "scope": "限流、背压、隔离、配额和上下文缓存。",
+          "evidence": "在受控负载下验证排队、拒绝和资源上限。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "10.2",
+          "resources": [
+            "https://github.com/temporalio/samples-python",
+            "https://docs.temporal.io/workflow-execution"
+          ],
+          "practiceNote": "显式设置并发、排队、背压和资源配额，并用负载验证。",
+          "exercise": {
+            "title": "受控并发与背压测试",
+            "goal": "逐步增加模拟任务负载，检查排队、拒绝和资源上限。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "10.2-P1"
+          }
+        },
+        {
+          "title": "幂等与故障恢复",
+          "scope": "至少一次执行、重复消息、副作用和补偿。",
+          "evidence": "在写操作后中断任务，验证恢复不会重复执行。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "10.3",
+          "resources": [
+            "https://github.com/temporalio/samples-python",
+            "https://docs.temporal.io/workflow-execution"
+          ],
+          "practiceNote": "假设动作可能重复执行，用幂等键与补偿保护业务状态。",
+          "exercise": {
+            "title": "写入后中断与重复消息",
+            "goal": "在模拟写入后中断工作进程，再投递同一任务并检查副作用。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "10.3-P1"
+          }
+        },
+        {
+          "title": "预算与成本控制",
+          "scope": "调用预算、时间上限、缓存与降级。",
+          "evidence": "达到预算后可终止或降级，并记录原因。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "10.4",
+          "resources": [
+            "https://arxiv.org/abs/2407.01502",
+            "https://github.com/temporalio/samples-python",
+            "https://docs.temporal.io/workflow-execution"
+          ],
+          "practiceNote": "把任务预算作为执行约束，记录降级和停止原因。",
+          "exercise": {
+            "title": "预算上限与降级实验",
+            "goal": "模拟昂贵调用和缓存命中，核对达到时间或费用上限的行为。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "10.4-P1"
+          }
+        },
+        {
+          "title": "发布与版本兼容",
+          "scope": "配置管理、灰度、回滚和状态兼容。",
+          "evidence": "演练版本切换，说明旧任务如何处理。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "10.5",
+          "resources": [
+            "https://github.com/temporalio/samples-python",
+            "https://docs.temporal.io/workflow-execution"
+          ],
+          "practiceNote": "版本切换前检查持久状态兼容，为在途任务设计回滚路径。",
+          "exercise": {
+            "title": "在途任务升级与回滚",
+            "goal": "用两个工作进程版本恢复同一测试任务，检查状态兼容。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "10.5-P1"
+          }
+        },
+        {
+          "title": "运行监控与质量协同",
+          "scope": "可用性、延迟、错误、恢复时间与第七类质量信号。",
+          "evidence": "分别定义服务健康和任务效果指标，并关联同一次执行。",
+          "status": "not_started",
+          "evidenceLink": null,
+          "id": "10.6",
+          "resources": [
+            "https://arxiv.org/abs/2407.01502",
+            "https://github.com/temporalio/samples-python",
+            "https://github.com/open-telemetry/opentelemetry-collector",
+            "https://opentelemetry.io/docs/concepts/observability-primer/"
+          ],
+          "practiceNote": "分开记录服务健康与任务质量，用执行关联 ID 连接两者。",
+          "exercise": {
+            "title": "健康与质量联合复盘",
+            "goal": "同时注入超时和答案错误，对比运行告警与质量失败的证据。",
+            "status": "planned",
+            "repository": null,
+            "environment": null,
+            "results": null,
+            "experiments": [],
+            "id": "10.6-P1"
+          }
+        }
+      ],
+      "sources": [
+        {
+          "kind": "paper",
+          "id": "2407.01502",
+          "title": "AI Agents That Matter",
+          "authors": [
+            "Kapoor, Sayash",
+            "Stroebl, Benedikt",
+            "Siegel, Zachary S.",
+            "Nadgir, Nitya",
+            "Narayanan, Arvind"
+          ],
+          "date": "2024-07-01",
+          "url": "https://arxiv.org/abs/2407.01502",
+          "question": "为何不能只比较准确率？成本、复现和评测设计有哪些问题？",
+          "status": "queued",
+          "verification": "已核对原始页面标题与摘要；全文待读",
+          "checkedAt": "2026-10-16",
+          "shortTitle": "AI Agents That Matter"
+        },
+        {
+          "kind": "official",
+          "title": "Temporal · Workflow Execution",
+          "url": "https://docs.temporal.io/workflow-execution",
+          "question": "持久执行如何面对失败、重试和恢复？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "official",
+          "title": "OpenTelemetry · Observability Primer",
+          "url": "https://opentelemetry.io/docs/concepts/observability-primer/",
+          "question": "指标、日志与执行链路如何关联？",
+          "status": "queued",
+          "verification": "参考入口已收录；内容与适用版本待核对"
+        },
+        {
+          "kind": "github",
+          "title": "temporalio / samples-python",
+          "url": "https://github.com/temporalio/samples-python",
+          "question": "持久工作流和外部动作如何组合？示例需如何适配 Agent？",
+          "status": "queued",
+          "verification": "参考仓库已收录；版本、维护状态及代码待调研"
+        },
+        {
+          "kind": "github",
+          "title": "open-telemetry / opentelemetry-collector",
+          "shortTitle": "OpenTelemetry Collector",
+          "url": "https://github.com/open-telemetry/opentelemetry-collector",
+          "question": "如何接收、处理和导出 traces、metrics 与 logs？",
+          "verification": "已核对原仓库 README 的数据采集职责；尚未部署",
+          "status": "queued",
+          "checkedAt": "2026-10-16"
+        }
+      ],
+      "project": {
+        "title": "可恢复且有预算的 Agent 服务",
+        "goal": "将综合实验中的 Agent 包装成带任务状态和故障恢复的服务。",
+        "status": "planned",
+        "steps": [
+          "定义任务状态、持久化和资源预算。",
+          "接入队列或持久执行，加入幂等与故障注入。",
+          "演练负载、恢复、发布与回滚，并关联质量记录。"
+        ],
+        "acceptance": [
+          "任务中断后可以恢复，副作用不会无意重复。",
+          "并发与预算上限可以验证。",
+          "分别报告运行稳定性和任务完成质量。",
+          "所有发布与回滚演练均保留实际结果。"
+        ],
+        "repository": null,
+        "environment": null,
+        "results": null,
+        "experiments": [],
+        "id": "10-P1"
+      },
+      "sharedSourceUrls": []
+    }
+  ],
+  "decisions": [
+    {
+      "date": "2026-10-16",
+      "title": "十个方向作为学习主目录",
+      "detail": "按控制编排、工具协议、上下文记忆、规划修正、环境交互、协作、评估、安全、适配和生产工程组织。跨分类练习可放在根目录 projects/，也允许按需要在根目录独立建项目。",
+      "sourceIds": [
+        "2210.03629",
+        "2302.04761",
+        "2308.03688"
+      ],
+      "type": "学习组织约定"
+    },
+    {
+      "date": "2026-10-16",
+      "title": "第七类覆盖 Agent 的整个生命周期",
+      "detail": "第七类扩展为评估、可观测性与持续改进，包含离线评测、线上评估、质量趋势、反馈、bad-case 归因与回归。线上评估基于真实生产活动，也可以异步采样；上线后使用固定数据集跑回归仍属于离线评测。",
+      "sourceUrls": [
+        "https://langfuse.com/docs/evaluation/overview",
+        "https://docs.langchain.com/langsmith/online-evaluations"
+      ],
+      "type": "已讨论的架构边界"
+    },
+    {
+      "date": "2026-10-16",
+      "title": "区分效果、运行健康和线上实验",
+      "detail": "第七类主要回答任务是否正确完成；第十类主要回答服务是否稳定可用。工具调用成功不等于任务成功。线上评分与 A/B 试验不同，评分变化本身不能证明版本带来因果改善。",
+      "sourceUrls": [
+        "https://langfuse.com/docs/evaluation/overview"
+      ],
+      "sourceIds": [
+        "2406.12045"
+      ],
+      "type": "工程学习约定"
+    },
+    {
+      "date": "2026-10-16",
+      "title": "线上失败回流到离线回归",
+      "detail": "生产执行记录 → 质量评估 → bad-case 收集与复核 → 归因与复现 → 修复 → 固定回归集 → 发布后验证。模型裁判需要校准，不能代替所有环境结果检查。",
+      "sourceUrls": [
+        "https://langfuse.com/docs/evaluation/overview"
+      ],
+      "sourceIds": [
+        "2306.05685"
+      ],
+      "type": "持续改进约定"
+    }
+  ],
+  "badCases": [],
+  "logs": [
+    {
+      "date": "2026-10-16",
+      "kind": "建档",
+      "title": "初始化学习 Wiki 与实践计划",
+      "detail": "建立十类学习清单、资料入口、项目计划、进度视图和记录规范。仅完成学习组织工作；论文全文阅读、代码复现与项目实验均未开始。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-16",
+      "kind": "讨论",
+      "title": "明确线上评估与 bad-case 闭环归属",
+      "detail": "将线上效果监控纳入第七类，与第十类运行可靠性建立清晰边界。记录线上评估、异步评分和 A/B 试验之间的区别。",
+      "categoryIds": [
+        "07",
+        "10"
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "kind": "讨论",
+      "title": "明确 Rubrics 评分细则的学习位置与验证边界",
+      "detail": "在 07.1 补充评分维度、分档描述、通过条件与严重失败条件；在 07.6 补充人工与模型共用细则、分歧复核、版本管理和独立样本验证；在 07.5 关联审核后的失败与误判示例。核对 LangSmith 官方评分说明、G-Eval 摘要及原始 README 和流畅性提示词，并记录适用边界。本次完成学习计划与来源记录补充，未运行评分实验，未标记学习单元或项目完成。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "kind": "组织调整",
+      "title": "第七方向按子课题建立独立学习页面",
+      "detail": "按用户要求，为 07.1 至 07.6 各建立一个独立页面，将对应论文、开源实现、官方参考、实践建议、练习与实验记录集中展示；全站菜单可展开第七方向并进入各课题。保留方向总览对照表、旧资料与练习页面及原有链接。仅调整页面组织，分类、来源、学习状态和实验结果保持原记录。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-16",
+      "kind": "阅读",
+      "title": "已读 Rubrics Survey，重点关注细则构造与 LLM 评估",
+      "detail": "用户确认已读完 The Rules of the Game: A Survey of Rubrics for Large Language Models，评价较好，特别指出 How to construct rubrics 和 Using rubrics to evaluate LLMs 帮助很大。实际读完日期和所读版本未指定；本条日期为反馈记录日期。收录作者稿并关联 07.1 与 07.6，记录对应第 3、5 节的重点和后续实践方向。leo 已核对固定版本 PDF 的相关内容；未运行评分或校准实验，未将子课题或项目标记为完成。",
+      "categoryIds": [
+        "07"
+      ],
+      "unitIds": [
+        "07.1",
+        "07.6"
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "架构设计",
+      "title": "客服 Agent 评估系统架构 v0.1",
+      "detail": "按用户要求，以历史对话、转换后的场景、客户模拟器和被评估 Agent 为起点，绘制嵌入第七方向综合练习的 HTML 架构图。补充场景审核与版本隔离、运行编排、可重置业务环境、执行证据、模拟有效性检查、结果与政策检查、rubric 裁判、人工校准、版本比较和失败回归。明确私有信息边界，允许不同的有效对话路径，区分 Agent 失败、模拟失真和测试故障。设计依据包括本次核对的 τ-bench 固定版本文档与代码，以及已记录的 Rubrics Survey。已验证 HTML 生成、站内链接、记录保留与重建；浏览器检查 1440、820、390、320 像素宽度，核对组件往返链接、键盘操作和无横向溢出。当前产出是架构方案，未实现评估服务、未运行 Agent 实验，也未标记学习或项目完成。",
+      "categoryIds": [
+        "07"
+      ],
+      "unitIds": [
+        "07.1",
+        "07.3",
+        "07.5",
+        "07.6"
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "展示约定",
+      "title": "左侧菜单补充 Projects 入口，客服评估架构改为中文",
+      "detail": "按用户要求，在全站左侧第七方向展开菜单和移动端目录中加入 Projects · 练手项目，并为当前项目页提供高亮。客服 Agent 评估架构的节点、连接说明、示例和组件职责改为中文；保留组件标识、原始来源链接、结构与实际学习进度。将项目入口和架构默认中文的长期约定写入 AGENTS.md。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "阅读",
+      "title": "已读 AgentBench: Evaluating LLMs as Agents",
+      "detail": "用户确认已读完 AgentBench: Evaluating LLMs as Agents。实际读完日期与所读版本未指定，本条日期为反馈记录日期。将论文状态更新为已读；未提供新的阅读笔记、代码复现或实验结果，学习单元与项目状态保留原记录。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "组织调整",
+      "title": "练手项目按所属子方向归档，外层仅保留跨方向项目",
+      "detail": "单一子方向的练习及实现、结果和实验记录在所属子方向中展示；07 使用既有子课题页面，其他方向在原表格行内展示。方向级 Projects 仅记录跨该方向多个子方向的项目，根目录 Projects 仅列跨学习方向项目。各方向左侧菜单补充可展开的 Projects 入口；旧练习锚点保留为所属子方向的跳转链接。项目数据、来源、学习进度和实验结果保持原记录，归档规则写入 AGENTS.md。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "展示约定",
+      "title": "左侧导航显示子方向的具体练手项目",
+      "detail": "桌面与手机学习菜单在各子方向下显示练手项目名称，直接链接到所属子方向的项目记录；跨子方向的 Projects 下显示综合项目名称。项目名称额外缩进一级，选择对应章节时高亮。沿用现有页面与记录，不改变学习及项目进度，导航规则同步写入 AGENTS.md。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "展示约定",
+      "title": "练手项目增加稳定编号",
+      "detail": "为每个练手项目保存唯一编号：子方向项目如 07.1-P1，跨子方向项目如 07-P1，根目录跨方向项目如 P1。左侧导航、总览表、项目标题和关联链接统一展示编号；既有路径、锚点、进度与实验记录不变。编号规则写入 AGENTS.md，后续新增项目按所属范围追加编号。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "展示约定",
+      "title": "导航中的 Projects 默认收起",
+      "detail": "桌面左侧菜单与手机学习目录中的练手项目、方向级 Projects 和根目录跨方向 Projects 均默认收起，用户可通过点击或键盘展开。当前学习方向仍默认展开；项目编号、入口与选中高亮保留，正文内容继续完整展示。此偏好写入 AGENTS.md。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "展示约定",
+      "title": "子方向练手项目直接链接到具体记录",
+      "detail": "按用户反馈，移除子方向导航中多余的“练手项目”折叠层，直接显示带编号的具体项目名称，点击即进入原有项目记录。跨子方向与根目录的 Projects 分组继续默认收起；桌面和手机采用相同行为。保留既有页面、锚点、项目编号、进度与实验记录，规则更新到 AGENTS.md。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-29",
+      "kind": "组织调整",
+      "title": "07 子方向理论与练手项目拆为独立页面",
+      "detail": "07.1 至 07.6 保留原理论页，分别在对应的 subtopics/07-N/projects/ 子目录下生成项目列表与独立项目页；当前每个列表含一个项目。左侧编号项目直接进入具体 HTML 页面，理论页只提供摘要和项目入口。实现、结果与实验记录展示在项目页；旧 #exercise、#experiments 和外层练习锚点保留为链接。项目编号、原始内容、学习及项目进度保持原记录，目录与导航规则更新到 AGENTS.md。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "07 方向与跨子方向项目由目录标题直接进入",
+      "detail": "按用户要求，将 07 方向标题直接链接到现有方向总览，将 Projects · 跨子方向直接链接到独立的跨子方向项目页；移除该方向目录中重复的方向总览、项目总览子入口。标题文字打开页面，右侧箭头独立展开或收起，具体编号项目仍可直接访问。桌面与手机采用相同行为，保留已有页面地址、内容、学习进度与实验记录。已在本地文件页面检查 1440、820、390、320 像素宽度下的链接、键盘操作、折叠状态、当前页高亮及无横向溢出；本次仅调整导航，未推进学习或项目完成状态。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "组织调整",
+      "title": "跨子方向 Projects 汇总页与编号项目详情独立分离",
+      "detail": "按用户要求，将各方向 Projects · 跨子方向统一为子项目摘要页，只展示项目编号、标题、简要目标、实际状态、数量与详情入口；每个跨子方向项目保存到独立的 projects/<项目编号>.html 页面。07-P1 的完整客服 Agent 评估架构、实施计划、验收标准与实验记录移入 projects/07-P1.html，汇总页不重复项目详情或子方向练习列表。桌面与手机菜单分别链接汇总页和具体项目，仅高亮实际当前页；旧页面章节链接保留为按需显示的转向入口。规则写入 AGENTS.md 并应用到十个方向的共享生成流程。已验证 63 个页面、站内链接、旧锚点、记录保留与稳定重建，并在 1440、820、390、320 像素宽度通过本地文件页面检查页面切换、键盘操作、折叠状态、当前页高亮和无横向溢出。所有既有学习进度、来源、架构和实验数据保持原记录。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "目录保留手动展开状态，选中项目后不再收起",
+      "detail": "按用户要求，展开 Projects · 跨子方向并选择 07-P1 后，保留完整展开路径与项目高亮。导航菜单在当前浏览器标签页内记住手动展开或收起的选择，页面跳转、刷新、章节跳转及前进后退不重置；桌面与手机目录同步，手机外层学习目录也保留展开状态。无已有选择时仍使用原有初始默认状态，明确手动收起后继续尊重该选择。规则写入 AGENTS.md。已在本地文件页面的 1440、820、390、320 像素宽度验证点击、键盘、快速展开后选中、刷新、历史导航、手动收起、屏幕宽度切换及当前页高亮；未发现页面错误或横向溢出。浏览器仅保存菜单展示状态，学习进度、来源、项目结果与历史日志仍保存在仓库中。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "架构研究",
+      "title": "客服 Agent 评估架构 v0.2：论文依据、分层判定与可读性改进",
+      "detail": "按用户要求，选读并核对 τ-bench、τ²-Bench、AgentBench、MT-Bench、G-Eval 的相关章节，以及 Anthropic、Langfuse、LangSmith 官方指南和固定版本的 τ-bench v2.0.0 实现文档。将 07-P1 客服评估架构更新为五步总览、单次试验交互图、判定与指标表、退货示例及组件职责，补充业务结果与动作合规的独立检查、试验有效性、重复可靠性、人工校准、版本可比性和线上失败回归。每项依据注明版本、核对范围与局限；MT-Bench、G-Eval 的引用量仅记录为 OpenAlex 指定条目的查询快照。v0.1 原始架构与旧来源核对记录完整保留。已生成并检查 63 个页面及站内链接，现有回归检查通过；本地文件页面在 1440、820、390、320 像素宽度完成浏览检查，修正手机表头过窄的问题，确认无横向溢出，15 个组件往返链接和 10 个来源入口可用，项目菜单展开状态、汇总与详情分离、旧链接及子方向直达链接正常。本轮完成资料选读和设计改进，未运行论文基准或客服评估实验，未改变学习单元与项目完成状态。",
+      "categoryIds": [
+        "07"
+      ],
+      "projectIds": [
+        "07-P1"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "引用展示收敛：正文保留必要依据，完整笔记集中到资料页",
+      "detail": "按用户反馈，减少正文中的重复超链接、论文列表和整段参考资料：分类项目详情页只保留一个资料入口；普通子方向项目回到所属理论页的资料区；有独立架构的项目只在具体方法、裁判偏差、重复可靠性和版本可比性等需要证据的地方保留短引用。当时完整来源标题、作者、版本、阅读记录、引用快照、核对范围与局限集中在分类资料页，架构资料按项目单独归档并提供返回项目的链接；子方向页面改为紧凑来源入口。随后按用户要求，资料说明随所属子方向或分类页维护，不再生成独立 papers 页面。已验证 63 个页面、21542 个站内链接与锚点，回归检查通过；在 1440、820、390、320 像素宽度检查 07-P1、07.1 和资料页无横向溢出、来源跳转、旧链接、项目菜单状态与当前页高亮。来源数据、映射、阅读状态、项目结果和历史记录未被删除或推进。",
+      "categoryIds": [
+        "07"
+      ],
+      "projectIds": [
+        "07-P1"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "项目层级改为上一层摘要、下一层详情",
+      "detail": "按用户反馈，项目标题补充用途说明；方向总览只展示直接子方向的职责简介、状态和下一层入口，07.1 等子方向页面再展示课题信息、资料入口和练手项目；跨子方向 Projects 与跨方向 Projects 汇总页只展示直接子项目的编号、用途、状态和详情入口，架构、实施、验收与实验记录保留在编号项目详情页。可比较的信息统一使用表格，移动端改为可读的分组布局；其他方向保留既有表格内容。已生成 63 个页面并通过回归检查，检查 07 总览、07.1、07-P1 详情及项目汇总页的桌面和移动布局；未改变学习状态、项目结果、来源记录或实验进度。",
+      "categoryIds": [
+        "07"
+      ],
+      "projectIds": [
+        "07-P1"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "项目标题统一为短格式",
+      "detail": "按用户反馈，将项目详情页、桌面与移动导航、项目入口和项目摘要中的项目名称统一为“编号 项目名-Project”，例如“07-P1 Agent 效果评估与 bad-case 闭环-Project”；用途说明保留在摘要表的用途简介列，不再放入标题括号。已重新生成 63 个页面并通过链接、记录保留和回归检查，实际打开 07-P1 详情页、跨子方向摘要页和第七方向页面确认标题换行完整、没有截断或页面横向溢出。",
+      "categoryIds": [
+        "07"
+      ],
+      "projectIds": [
+        "07-P1"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "架构设计",
+      "title": "依据 τ²-Bench 将客服评估架构升级到 v0.3",
+      "detail": "阅读 τ²-Bench 原文后确认 v0.2 已有状态断言和有效性分层，但运行图没有显式展示客户侧工具与状态，任务工厂、动作／历史断言、模拟器逐轮审计和 No-User／Oracle Plan 对照也未成为一等设计。v0.3 保留完整 v0.2 快照，新增双控制运行分支、原子任务 init／solution／assert 与可行性验证、实现／任务规格／模拟器错误分类、critical／benign 审计、persona／复杂度分层和配对诊断。论文未覆盖 expert–novice 差异；架构仍是待实现方案，未运行论文或本项目实验。",
+      "categoryIds": [
+        "07"
+      ],
+      "projectIds": [
+        "07-P1"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "学习记录与论文资料回归所属页面",
+      "detail": "按用户要求，学习记录继续保存在 wiki/content.json 和 wiki/learning-log.md，不在任何 HTML 页面展示。删除十个方向下的独立 papers/ 目录与论文页面；论文的简要说明、必要的本地文件和来源锚点直接放在所属子方向或分类页面，项目详情只保留必要的架构依据。资料索引仍作为紧凑入口，但不再引导到分类 papers 页面。已重新生成 53 个页面，检查器、回归测试和 1440、820、390、320 像素浏览检查通过；未改变学习进度、项目结果或来源阅读状态。",
+      "categoryIds": []
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "论文阅读",
+      "title": "G-Eval 阅读状态更新",
+      "detail": "用户确认已阅读《G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment》。资料状态更新为已读；保留其对任务定义、评价维度、结构化评分和模型裁判局限的说明。该阅读确认不代表本仓库已运行 G-Eval 或验证客服 Agent 评估效果。",
+      "categoryIds": [
+        "07"
+      ],
+      "unitIds": [
+        "07.1",
+        "07.6"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "子方向资料入口与资料说明合并",
+      "detail": "按用户反馈，07.x 子方向页面不再把资料入口表和下面的资料说明拆成两个区块。每条资料在统一的“资料”区只出现一次，并在区内按论文、开源项目、官方参考分组，保留类型、状态、本页关注、简要结论、适用边界、核对信息和必要的本地文件；旧的论文、实现、官方参考和来源锚点继续可定位。页面导航与项目层级未改变。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "资料分类统一为分组表格",
+      "detail": "按用户要求，将 07.x 子方向页面的论文、开源项目和官方参考改为按类型分组的比较表格。每行保留资料标题、状态、关联子课题、本页关注、结论与边界、核对信息和本地文件；窄屏改为带字段名的纵向行，旧来源锚点继续可定位。后续生成的子方向与分类资料页沿用同一表格规则。",
+      "categoryIds": [
+        "07"
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "kind": "展示约定",
+      "title": "正文改为单列全宽布局",
+      "detail": "按用户要求，移除页面右侧的本页内容标记栏，正文改为单列全宽布局。课题信息、资料表格和项目内容共用同一正文宽度，并保留正文内部的课题信息、资料和练手项目链接；桌面与移动端均不产生横向滚动。",
+      "categoryIds": [
+        "07"
+      ]
+    }
+  ],
+  "sharedProject": {
+    "title": "Agent Learning Lab",
+    "purpose": "连接十个方向的可追溯、可评测、可恢复 Agent 实验载体",
+    "dir": "projects/agent-learning-lab",
+    "status": "planned",
+    "goal": "逐步搭建一个可追溯、可评测、可恢复的工具 Agent，用同一个实验载体连接十个方向。",
+    "milestones": [
+      {
+        "title": "最小闭环",
+        "categoryIds": [
+          "01",
+          "02"
+        ],
+        "outcome": "模型、工具、状态和停止条件；可验证的任务结果。",
+        "status": "planned"
+      },
+      {
+        "title": "证据与任务策略",
+        "categoryIds": [
+          "03",
+          "04",
+          "05"
+        ],
+        "outcome": "知识检索、计划、外部验证和隔离环境。",
+        "status": "planned"
+      },
+      {
+        "title": "质量与安全",
+        "categoryIds": [
+          "07",
+          "08",
+          "09"
+        ],
+        "outcome": "离线任务集、模拟线上评估、注入测试和版本比较。",
+        "status": "planned"
+      },
+      {
+        "title": "可靠运行与可选协作",
+        "categoryIds": [
+          "06",
+          "10"
+        ],
+        "outcome": "恢复、预算、并发测试；用基线判断是否需要多 Agent。",
+        "status": "planned"
+      }
+    ],
+    "acceptance": [
+      "每个阶段都保留实际输入、配置、运行结果与失败分析。",
+      "研究性代码与服务代码分开，依赖和版本可追溯。",
+      "模拟线上数据明确标注，接入真实业务前定义隐私与授权边界。",
+      "论文结论、代码行为和实验观察分别记录，不相互替代。"
+    ],
+    "id": "P1"
+  }
+}
