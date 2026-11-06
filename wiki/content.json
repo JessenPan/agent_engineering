@@ -1546,7 +1546,18 @@
             "https://arxiv.org/abs/2506.07982v1",
             "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
             "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
-            "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0"
+            "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0",
+            "https://arxiv.org/abs/2607.02577v1",
+            "https://arxiv.org/abs/2606.09863v1",
+            "https://arxiv.org/abs/2610.25954v1",
+            "https://arxiv.org/abs/2606.22737v2",
+            "https://arxiv.org/abs/2610.16067v2",
+            "https://arxiv.org/abs/2611.04399v1",
+            "https://arxiv.org/abs/2611.07051v1",
+            "https://arxiv.org/abs/2611.02676v1",
+            "https://arxiv.org/abs/2605.31278v2",
+            "https://github.com/EmertonData/glide",
+            "https://github.com/YangzeLiu/eval-instrument-disclosure"
           ],
           "practiceNote": "隔离评测数据，固定版本和任务标准，重复运行检查波动。设计任务专属的 rubrics（评分细则）：明确评价维度、各档分数的判定描述、通过条件、严重失败条件，以及正常、边界和失败示例。能核验的任务结果优先用环境断言检查，主观质量再用评分细则评审，避免总分掩盖关键失败；固定评分细则版本再比较系统版本。",
           "exercise": {
@@ -1571,7 +1582,10 @@
             "https://github.com/langfuse/langfuse",
             "https://docs.langchain.com/langsmith/online-evaluations",
             "https://langfuse.com/docs/evaluation/overview",
-            "https://langfuse.com/docs/evaluation/core-concepts"
+            "https://langfuse.com/docs/evaluation/core-concepts",
+            "https://arxiv.org/abs/2606.11079v2",
+            "https://arxiv.org/abs/2610.25954v1",
+            "https://arxiv.org/abs/2611.07051v1"
           ],
           "practiceNote": "区分真实结果、用户反馈和自动分数，记录采样与反馈延迟。",
           "exercise": {
@@ -1595,7 +1609,10 @@
           "resources": [
             "https://github.com/langfuse/langfuse",
             "https://langfuse.com/docs/observability/overview",
-            "https://langfuse.com/docs/observability/best-practices"
+            "https://langfuse.com/docs/observability/best-practices",
+            "https://arxiv.org/abs/2611.04399v1",
+            "https://arxiv.org/abs/2611.07051v1",
+            "https://github.com/YangzeLiu/eval-instrument-disclosure"
           ],
           "practiceNote": "每次模型调用与工具动作分别记录；稳定命名并关联版本。",
           "exercise": {
@@ -1619,7 +1636,11 @@
           "resources": [
             "https://github.com/langfuse/langfuse",
             "https://langfuse.com/docs/observability/overview",
-            "https://langfuse.com/docs/evaluation/overview"
+            "https://langfuse.com/docs/evaluation/overview",
+            "https://arxiv.org/abs/2607.02577v1",
+            "https://arxiv.org/abs/2606.09863v1",
+            "https://arxiv.org/abs/2611.04399v1",
+            "https://arxiv.org/abs/2611.07051v1"
           ],
           "practiceNote": "按任务、版本和样本量分组，告警后复核采样和输入变化。",
           "exercise": {
@@ -1647,7 +1668,13 @@
             "https://docs.langchain.com/langsmith/llm-as-judge",
             "https://arxiv.org/abs/2506.07982v1",
             "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
-            "https://langfuse.com/docs/evaluation/core-concepts"
+            "https://langfuse.com/docs/evaluation/core-concepts",
+            "https://arxiv.org/abs/2606.09863v1",
+            "https://arxiv.org/abs/2610.25954v1",
+            "https://arxiv.org/abs/2606.22737v2",
+            "https://arxiv.org/abs/2610.16067v2",
+            "https://arxiv.org/abs/2611.04399v1",
+            "https://arxiv.org/abs/2611.07051v1"
           ],
           "practiceNote": "保留脱敏轨迹和复现条件，让修复接受固定回归集检验。区分 Agent 失败与评分器误判，将经人工复核的典型失败和边界案例整理为 rubrics（评分细则）的判定示例。修订细则时保留旧版与修改原因，对可比样本按新旧标准重评；校准示例与独立评测数据隔离，避免修改标准制造表面提升。",
           "exercise": {
@@ -1679,7 +1706,14 @@
             "https://docs.langchain.com/langsmith/llm-as-judge",
             "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
             "https://github.com/sierra-research/tau2-bench/blob/989d3285ae669e49503324bdb9981bf14fccedeb/docs/evaluation.md",
-            "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0"
+            "https://github.com/sierra-research/tau2-bench/releases/tag/v2.0.0",
+            "https://arxiv.org/abs/2606.22737v2",
+            "https://arxiv.org/abs/2606.22329v1",
+            "https://arxiv.org/abs/2611.02676v1",
+            "https://arxiv.org/abs/2611.07051v1",
+            "https://arxiv.org/abs/2605.31278v2",
+            "https://github.com/Shreyaskc/BabelJudge",
+            "https://github.com/EmertonData/glide"
           ],
           "practiceNote": "用人工样本校准裁判；评分一致性与 A/B 因果比较分开报告。人工与模型使用同一版 rubrics（评分细则），以正例、反例和边界例明确各档含义，独立评分后逐维度检查分歧，分别分析标准含糊、证据不足和裁判偏差。用校准集修订细则和示例，在独立保留集检查一致性及严重失败的误判；记录 rubric、裁判模型和提示词版本，不能把高一致率当作任务成功的证明。",
           "exercise": {
@@ -1831,15 +1865,20 @@
           "date": "2024-06-17",
           "url": "https://arxiv.org/abs/2406.12045",
           "question": "最终环境状态、领域规则和多次运行的一致性如何检查？",
-          "status": "reading",
-          "verification": "已核对原始页面标题与摘要；全文待读；2026-10-30 为 07-P1 架构修订选读相关方法与局限，详见项目 v0.2 资料依据；未运行或复现。",
-          "checkedAt": "2026-10-30",
+          "status": "read",
+          "verification": "用户于 2026-11-06 确认已读论文；此前已核对原始页面标题、摘要及 07-P1 架构修订所需章节；未运行或复现代码。",
+          "checkedAt": "2026-11-06",
           "shortTitle": "tau-bench",
           "verificationHistory": [
             {
               "checkedAt": "2026-10-16",
               "verification": "已核对原始页面标题与摘要；全文待读",
               "status": "queued"
+            },
+            {
+              "checkedAt": "2026-11-06",
+              "verification": "用户确认已读论文；未运行或复现代码",
+              "status": "read"
             }
           ],
           "notes": {
@@ -2113,6 +2152,271 @@
             "modules": "发布说明明确 v2.0 与 1.x 分数不可比较；运行指南分别记录失败、未评分、缺失和基础设施错误。用于冻结完整评估配置与说明分母。",
             "execution": "仅阅读相关文档与代码；未安装或运行。",
             "limitations": "核对发布说明与运行指南的 Scoring、Pass^3 等章节。新实现不等于原始论文；语音／多语言功能属于可选扩展，不据此扩大本项目当前范围。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2607.02577",
+          "title": "Benchmarking the Benchmarks: A Validity Audit of Tool-Calling Evaluation",
+          "shortTitle": "Benchmarking the Benchmarks / 评估器有效性",
+          "url": "https://arxiv.org/abs/2607.02577v1",
+          "authors": ["Vishvesh Bhat", "Jay Vaghasiya", "Muhammad Ahmed Mohsin", "Asad Aali"],
+          "date": "2026-06-30",
+          "version": "v1",
+          "question": "工具调用基准的分数是否真的反映 Agent 能力，还是反映评估器缺陷？",
+          "status": "reading",
+          "verification": "已核对 arXiv 标题、摘要、提交日期和版本说明；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要报告对 BFCL v4、τ²-Bench、LiveMCPBench 和 MCP-Atlas 的有效性与可复现性审计，涉及专家不一致、状态匹配脆弱和重复运行波动。",
+            "conclusions": "用于 07.1 的评估器有效性检查、07.4 的重复稳定性和 07.5 的 bad-case 归因。",
+            "limitations": "当前只核对摘要；论文数据、统计方法和代码尚未独立验证。",
+            "practice": "固定评估器版本、分母、重复次数和人工复核样本。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2606.09863",
+          "title": "From Confident Closing to Silent Failure: Characterizing False Success in LLM Agents",
+          "shortTitle": "False Success / 伪成功",
+          "url": "https://arxiv.org/abs/2606.09863v1",
+          "authors": ["Laksh Advani"],
+          "date": "2026-06-01",
+          "version": "v1",
+          "question": "Agent 声称任务完成时，如何发现环境状态实际上没有完成？",
+          "status": "reading",
+          "verification": "已核对 arXiv 标题、摘要、提交日期和 FAGEN@ICML2026 接收说明；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要研究 τ²-Bench 与 AppWorld 中的 false success，并比较模型裁判与轻量检测器对环境结果不一致的发现能力。",
+            "conclusions": "支持 07.4 的质量监控和 07.5 的 bad-case 归因：自报完成不能替代环境状态检查。",
+            "limitations": "报告的 benchmark、模型和检测器结果尚未在本项目复现。",
+            "practice": "分开记录自报完成、环境断言和人工复核。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2610.25954",
+          "title": "CXBench: A Benchmark for Process-Compliant LLM Agents in Regulated Customer-Experience Workflows",
+          "shortTitle": "CXBench / 流程合规",
+          "url": "https://arxiv.org/abs/2610.25954v1",
+          "authors": ["Boxi Yu", "Yuzhong Zhang", "Zhenfeng Su", "Linfu Xi", "Yinghan Yao", "Shitao Chen", "Yang Cao", "Liting Lin", "Lionel Briand", "Emir Muñoz"],
+          "date": "2026-10-19",
+          "version": "v1",
+          "question": "客服 Agent 取得正确结果时，如何同时验证披露、授权、顺序和其他流程要求？",
+          "status": "read",
+          "verification": "已完成全文阅读；未运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要将业务结果与流程合规分开评估，并将规则卡片连接到可观察的轨迹证据。",
+            "conclusions": "与 07-P1 的业务结果、动作授权和政策门槛直接相关，也补充 07.5 的 bad-case 分类。",
+            "limitations": "监管领域、任务集、混合裁判和结果统计尚未独立检查。",
+            "practice": "分别定义业务结果、政策合规、沟通质量和试验有效性。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2606.22737",
+          "title": "GroundEval: A Deterministic Replacement for LLM-as-Judge in Stateful Agent Evaluation",
+          "shortTitle": "GroundEval / 证据路径检查",
+          "url": "https://arxiv.org/abs/2606.22737v2",
+          "authors": ["Jeffrey Flynt"],
+          "date": "2026-06-22",
+          "version": "v2",
+          "question": "如何检查 Agent 使用了当时可访问的正确证据，而不是只看最终答案是否合理？",
+          "status": "reading",
+          "verification": "已核对 arXiv v2 标题、摘要和提交日期；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要提出对搜索、获取、引用和权限路径做确定性检查，并区分 Silence、Perspective 和 Counterfactual。",
+            "conclusions": "为 07.1 和 07.5 提供不依赖模型裁判的证据路径检查思路。",
+            "limitations": "案例配置、断言实现和比较实验尚未验证。",
+            "practice": "把关键任务的证据、时间边界和权限条件转为可执行断言。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2606.11079",
+          "title": "VISTA: A Versatile Interactive User Simulation Toolkit for Agent Evaluation",
+          "shortTitle": "VISTA / 用户模拟质量",
+          "url": "https://arxiv.org/abs/2606.11079v2",
+          "authors": ["Yunan Lu", "Ryan Shea", "Yusen Zhang", "Zhou Yu"],
+          "date": "2026-06-09",
+          "version": "v2",
+          "question": "如何衡量用户模拟器是否真实、覆盖充分，并能暴露 Agent 的失败？",
+          "status": "reading",
+          "verification": "已核对 arXiv v2 标题、摘要和提交日期；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要提出衡量模拟交互真实性、能力覆盖和交互效果的指标，并支持 UI 与 API 混合用户动作。",
+            "conclusions": "补充 07.2 的模拟线上评估和用户反馈覆盖范围，也可用于 τ-bench 用户模拟器审计。",
+            "limitations": "实验场景、指标定义和实现尚未独立检查。",
+            "practice": "记录用户目标、动作权限、有效路径覆盖和模拟器错误。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2606.22329",
+          "title": "BabelJudge: Measuring LLM-as-a-Judge Reliability Across Languages and Agent Trajectories",
+          "shortTitle": "BabelJudge / 裁判可靠性",
+          "url": "https://arxiv.org/abs/2606.22329v1",
+          "authors": ["Shreyas KC"],
+          "date": "2026-06-21",
+          "version": "v1",
+          "question": "模型裁判的顺序、冗长、语言和轨迹偏差如何被系统地发现？",
+          "status": "reading",
+          "verification": "已核对 arXiv 标题、摘要、提交日期和代码仓库元数据；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "repository": "https://github.com/Shreyaskc/BabelJudge",
+          "notes": {
+            "evidence": "摘要提出对 position bias、verbosity bias、order inconsistency 和跨语言退化做可靠性审计，并扩展到工具轨迹扰动。",
+            "conclusions": "作为 07.6 评估器校准的候选方法。",
+            "limitations": "代码、基准构造和跨语言结果尚未独立复现。",
+            "practice": "用顺序交换、可控轨迹扰动和人工审核样本检查裁判偏差。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2610.16067",
+          "title": "When Agent Evaluation Becomes Unreliable: An Empirical Study of Oracle Failures and Configuration-Dependent Measurement in an LLM Agent Benchmark",
+          "shortTitle": "Oracle Failures / 评估器故障",
+          "url": "https://arxiv.org/abs/2610.16067v2",
+          "authors": ["Junjie Chen"],
+          "date": "2026-10-12",
+          "version": "v2",
+          "question": "评估基准的 oracle 或状态重置错误会怎样改变 Agent 的分数和排序？",
+          "status": "reading",
+          "verification": "已核对 arXiv v2 标题、摘要、提交日期和版本说明；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要提出状态完整性不变量和已知答案控制，并报告数据库重置与 ground-truth hash 造成的测量偏差。",
+            "conclusions": "支持 07.1 的评估器契约测试、07.4 的可比性检查和 07.5 的 bad-case 归因。",
+            "limitations": "注入实验、第二基准迁移限制和复现材料尚未独立检查。",
+            "practice": "把状态重置、oracle 隔离、已知答案控制和回放一致性列为发布前检查。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2611.04399",
+          "title": "Silent Instrument Errors Reorder Agent Leaderboards",
+          "shortTitle": "Silent Instrument Errors / 评估基础设施",
+          "url": "https://arxiv.org/abs/2611.04399v1",
+          "authors": ["Yangze Liu"],
+          "date": "2026-11-03",
+          "version": "v1",
+          "question": "评分、日志、回放和版本管理中的静默错误会不会改变 Agent 排名？",
+          "status": "reading",
+          "verification": "已核对 arXiv 标题、摘要、提交日期和代码仓库元数据；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "repository": "https://github.com/YangzeLiu/eval-instrument-disclosure",
+          "notes": {
+            "evidence": "摘要指出未触发评分、成本重复计算、动作来源错误和重新评分版本变化等问题。",
+            "conclusions": "作为 07.1、07.3、07.4 和 07.5 的最新风险提醒。",
+            "limitations": "案例材料、维护者确认和建议检查尚未独立复核。",
+            "practice": "报告实际被评分的比例、根 span 成本、动作来源和评估器版本。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2611.07051",
+          "title": "Closed-Loop Agent Evaluation: Layered Measurement and Self-Calibration",
+          "shortTitle": "Closed-Loop Agent Evaluation / 闭环评估",
+          "url": "https://arxiv.org/abs/2611.07051v1",
+          "authors": ["Ruifeng Ren", "Gun Ahn"],
+          "date": "2026-11-04",
+          "version": "v1",
+          "question": "如何把生产中的证据、评估器校准和回归修复连接成持续运行的评估闭环？",
+          "status": "reading",
+          "verification": "已核对 arXiv 标题、摘要和提交日期；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要提出 span、trace、conversation 和 engagement 四层测量，以及证据审计与回归修复的内外两层循环。",
+            "conclusions": "与 07-P1 的线上质量、证据来源、评估器校准和 bad-case 回归设计高度相关。",
+            "limitations": "这是 2026-11-04 的新预印本；案例、统计和工程实现尚未独立验证。",
+            "practice": "阅读全文后比较其层级指标、证据溯源和自校准机制与现有 v0.3 架构的差异。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2611.02676",
+          "title": "Does the Judge See What the Evaluation Requires? Input Assurance for LLM Agent Evaluation",
+          "shortTitle": "Input Assurance / 裁判输入保障",
+          "url": "https://arxiv.org/abs/2611.02676v1",
+          "authors": [],
+          "date": "2026-11-02",
+          "version": "v1",
+          "question": "如何证明提供给模型裁判的输入包完整、准确并符合评估要求？",
+          "status": "reading",
+          "verification": "已核对 arXiv 标题、摘要和提交日期；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "evidence": "摘要把轨迹渲染器、软件检查器和模型裁判输入包作为独立的评估对象。",
+            "conclusions": "补充 07.6：裁判校准也要验证裁判看到的证据包。",
+            "limitations": "作者信息、输入保障实现和实验结果尚未独立检查。",
+            "practice": "为裁判输入建立 schema、完整性检查、权限检查和版本记录。"
+          }
+        },
+        {
+          "kind": "paper",
+          "id": "2605.31278",
+          "title": "Industrializing Prediction-Powered Inference: The GLIDE Library for Reliable GenAI and Agentic Systems Evaluation",
+          "shortTitle": "GLIDE / 不确定性评估",
+          "url": "https://arxiv.org/abs/2605.31278v2",
+          "authors": ["Grégoire Martinon", "Ibrahim Merad", "Mohammed Raki"],
+          "date": "2026-05-29",
+          "version": "v2",
+          "question": "如何用少量人工标注校正自动评估，并报告有不确定性的总体质量估计？",
+          "status": "reading",
+          "verification": "已核对 arXiv v2 标题、摘要、提交日期、ICML 2026 workshop 接收说明和代码仓库元数据；未阅读全文、运行代码或独立复现。",
+          "checkedAt": "2026-11-06",
+          "repository": "https://github.com/EmertonData/glide",
+          "notes": {
+            "evidence": "摘要介绍 GLIDE 对 prediction-powered inference 方法和采样器的统一实现，关注人工标注成本与估计不确定性。",
+            "conclusions": "作为 07.2 和 07.6 的统计方法候选，补充线上采样、人工校准和置信区间报告。",
+            "limitations": "库的 API、模拟验证和案例结果尚未独立复现。",
+            "practice": "比较均匀、分层和主动采样对估计误差与成本的影响。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "Shreyaskc / BabelJudge",
+          "url": "https://github.com/Shreyaskc/BabelJudge",
+          "question": "如何运行裁判偏差和 Agent 轨迹可靠性审计？",
+          "status": "queued",
+          "verification": "已核对 GitHub 仓库元数据；尚未阅读 README、安装、运行或复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "version": "默认分支 main；仓库最近推送于 2026-10-01。",
+            "execution": "尚未安装或执行。",
+            "limitations": "仓库元数据不证明论文方法已复现或适合本项目。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "EmertonData / glide",
+          "url": "https://github.com/EmertonData/glide",
+          "question": "如何使用 GLIDE 的预测辅助推断方法估计 Agent 质量和不确定性？",
+          "status": "queued",
+          "verification": "已核对 GitHub 仓库元数据；尚未阅读 README、安装、运行或复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "version": "默认分支 main；仓库最近推送于 2026-11-05。",
+            "execution": "尚未安装或执行。",
+            "limitations": "仓库元数据不证明库的统计实现或论文案例已在本项目复现。"
+          }
+        },
+        {
+          "kind": "github",
+          "title": "YangzeLiu / eval-instrument-disclosure",
+          "url": "https://github.com/YangzeLiu/eval-instrument-disclosure",
+          "question": "如何复核 Agent 评估中评分、成本、动作来源和版本差异等基础设施问题？",
+          "status": "queued",
+          "verification": "已核对 GitHub 仓库元数据；尚未阅读 README、安装、运行或复现。",
+          "checkedAt": "2026-11-06",
+          "notes": {
+            "version": "默认分支 main；仓库最近推送于 2026-11-03。",
+            "execution": "尚未安装或执行。",
+            "limitations": "仓库元数据不证明论文案例或修复脚本已在本项目复现。"
           }
         }
       ],
@@ -4514,6 +4818,52 @@
       "detail": "按用户要求，移除页面右侧的本页内容标记栏，正文改为单列全宽布局。课题信息、资料表格和项目内容共用同一正文宽度，并保留正文内部的课题信息、资料和练手项目链接；桌面与移动端均不产生横向滚动。",
       "categoryIds": [
         "07"
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "kind": "论文阅读",
+      "title": "已读 τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+      "detail": "用户确认已读完 τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains。资料状态更新为已读；保留论文关于工具 Agent、用户交互、业务环境结果与多次运行可靠性的既有记录。未运行 τ-bench 代码或复现实验，学习单元与项目状态保持原记录。",
+      "categoryIds": [
+        "07"
+      ],
+      "unitIds": [
+        "07.1",
+        "07.5"
+      ],
+      "sourceIds": [
+        "2406.12045"
+      ]
+    },
+    {
+      "date": "2026-11-06",
+      "kind": "资料扫描",
+      "title": "补充 2026 年评估、可观测性与持续改进资料",
+      "detail": "根据用户要求检查 2026 年新资料，补充 11 篇论文和 3 个相关 GitHub 实现。新增资料集中在评估器有效性、false success、流程合规、证据路径、用户模拟、裁判校准、oracle 故障、评估基础设施、闭环评估和不确定性估计。当前仅核对 arXiv 元数据与摘要，并核对 3 个仓库的基本元数据；新增论文状态记为阅读中，代码状态记为待读，未阅读全文、运行代码或独立复现，未改变学习单元和项目完成状态。",
+      "categoryIds": [
+        "07"
+      ],
+      "unitIds": [
+        "07.1",
+        "07.2",
+        "07.3",
+        "07.4",
+        "07.5",
+        "07.6"
+      ],
+      "sourceIds": [
+        "2607.02577",
+        "2606.09863",
+        "2610.25954",
+        "2606.22737",
+        "2606.11079",
+        "2606.22329",
+        "2610.16067",
+        "2611.04399",
+        "2611.07051",
+        "2611.02676",
+        "2605.31278"
       ]
     }
   ],
